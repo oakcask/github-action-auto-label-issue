@@ -1,0 +1,14 @@
+# add fox label when "fox" is found
+fox:
+  pattern: fox
+# add cat label when "cat" is found
+cat:
+  pattern: cat
+# add cow label when "cow" is found.
+# remove cow label if "cow" is missing.
+cow:
+  pattern: cow
+  removeOnMissing: true
+# add regex label when the specified regular expression pattern is matching.
+regex:
+  pattern: "[Tt]he.*\\."
