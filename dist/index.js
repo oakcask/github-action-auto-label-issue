@@ -64,19 +64,33 @@ function getContent(gh, path) {
     });
 }
 function addLabels(gh, issueNumber, labels) {
-    return gh.rest.issues.addLabels({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        issue_number: issueNumber,
-        labels
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield gh.rest.issues.addLabels({
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                issue_number: issueNumber,
+                labels
+            });
+        }
+        catch (e) {
+            console.warn(e);
+        }
     });
 }
 function removeLabels(gh, issueNumber, labels) {
-    return Promise.all(labels.map((label) => gh.rest.issues.removeLabel({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        issue_number: issueNumber,
-        name: label
+    return Promise.all(labels.map((label) => __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield gh.rest.issues.removeLabel({
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                issue_number: issueNumber,
+                name: label
+            });
+        }
+        catch (e) {
+            console.warn(e);
+        }
     })));
 }
 function getConfiguration(gh, path) {
