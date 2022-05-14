@@ -30,25 +30,33 @@ async function getContent (gh: Api, path: string) {
   return Buffer.from(data.content, data.encoding).toString()
 }
 
-function addLabels (gh: Api, issueNumber: number, labels: string[]) {
-  return gh.rest.issues.addLabels({
-    owner: github.context.repo.owner,
-    repo: github.context.repo.repo,
-    issue_number: issueNumber,
-    labels
-  })
+async function addLabels (gh: Api, issueNumber: number, labels: string[]) {
+  try {
+    await gh.rest.issues.addLabels({
+      owner: github.context.repo.owner,
+      repo: github.context.repo.repo,
+      issue_number: issueNumber,
+      labels
+    })
+  } catch (e) {
+    console.warn(e)
+  }
 }
 
-function removeLabels (gh: Api, issueNumber, labels: string[]) {
+function removeLabels (gh: Api, issueNumber: number, labels: string[]) {
   return Promise.all(
-    labels.map((label) =>
-      gh.rest.issues.removeLabel({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        issue_number: issueNumber,
-        name: label
-      })
-    )
+    labels.map(async (label) => {
+      try {
+        await gh.rest.issues.removeLabel({
+          owner: github.context.repo.owner,
+          repo: github.context.repo.repo,
+          issue_number: issueNumber,
+          name: label
+        })
+      } catch (e) {
+        console.warn(e)
+      }
+    })
   )
 }
 
