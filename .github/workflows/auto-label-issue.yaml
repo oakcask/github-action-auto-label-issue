@@ -2,7 +2,7 @@ name: "Auto Labeling"
 on:
   issues:
     types: [opened, edited]
-
+permissions: write-all
 jobs:
   mark:
     runs-on: ubuntu-latest
