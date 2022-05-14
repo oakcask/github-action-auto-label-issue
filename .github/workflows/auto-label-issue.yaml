@@ -1,0 +1,13 @@
+name: "Auto Labeling"
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  mark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: oakcask/github-action-auto-label-issue@v1.0.0
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          configuration-path: .github/auto-label.yaml
