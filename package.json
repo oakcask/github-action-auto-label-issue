@@ -1,0 +1,36 @@
+{
+  "name": "github-action-auto-label-issue",
+  "main": "lib/main.js",
+  "scripts": {
+    "compile": "tsc",
+    "build": "tsc && ncc build lib/main.js",
+    "test": "jest",
+    "format:all": "eslint --fix . src/**/*.ts __tests__/**/*.ts __mocks__/**/*.ts"
+  },
+  "author": "oakcask",
+  "license": "MIT",
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/github": "^8.0.4",
+    "@types/jest": "^27.5.1",
+    "@types/js-yaml": "^4.0.5",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
+    "@vercel/ncc": "^0.33.4",
+    "eslint": "^8.15.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^26.2.1",
+    "eslint-plugin-n": "^15.2.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "jest": "^28.1.0",
+    "semantic-release": "^19.0.2",
+    "ts-jest": "^28.0.2",
+    "typescript": "^4.6.4"
+  },
+  "dependencies": {
+    "@actions/core": "^1.8.1",
+    "@actions/github": "^5.0.2",
+    "js-yaml": "^4.1.0"
+  }
+}

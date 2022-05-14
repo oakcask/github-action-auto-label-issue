@@ -1,0 +1,13 @@
+name: github-action-auto-label-issue
+description: Automatically add/remove labels on github issues
+author: oakcask
+inputs:
+  repo-token:
+    description: GITHUB_TOKEN
+    required: true
+  configuration-path:
+    description: The path for label configurations
+    required: true
+runs:
+  using: node16
+  main: dist/index.js
