@@ -5,7 +5,8 @@
     "compile": "tsc",
     "build": "tsc && ncc build lib/main.js",
     "test": "jest",
-    "format:all": "eslint --fix ./*.js src/**/*.ts __tests__/**/*.ts __mocks__/**/*.ts"
+    "format:all": "eslint --fix ./*.js src/**/*.ts __tests__/**/*.ts __mocks__/**/*.ts",
+    "release": "semantic-release"
   },
   "author": "oakcask",
   "license": "MIT",

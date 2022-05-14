@@ -23,3 +23,5 @@ jobs:
           committer_email: 41898282+github-actions[bot]@users.noreply.github.com
           add: dist/
       - run: npm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
