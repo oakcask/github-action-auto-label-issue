@@ -1,6 +1,6 @@
 # add fox label when "fox" is found
 fox:
-  pattern: fox
+  - fox
 # add cat label when "cat" is found
 cat:
   pattern: cat

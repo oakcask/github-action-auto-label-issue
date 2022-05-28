@@ -33,9 +33,9 @@ Now, write labeling rules to the YAML file pointed by `configuration-path`.
 # add fox label when "fox" is found
 fox:
   pattern: fox
-# add cat label when "cat" is found
+# add cat label when "cat" is found. Array is also accepted as an "all" expression.
 cat:
-  pattern: cat
+  - cat
 # add cow label when "cow" is found.
 # remove cow label if "cow" is missing.
 cow:
@@ -44,4 +44,28 @@ cow:
 # add regex label when the specified regular expression pattern is matching.
 regex:
   pattern: "[Tt]he.*\\."
+```
+
+For more complecated use cases, we can utilize complex expressions like:
+
+```yaml
+bat:
+  # Matches against phrase like "bat is animal and has wings".
+  # but "birds has wings." won't match.
+  all:
+    - wings?
+    - animal
+  # "all" can be reducted in this case; because an naked array will be treated as child node of "all":
+bat2:
+  - wings?
+  - animal
+```
+
+```yaml
+pirate:
+  # To detect pirates in issue, check any appearences of `Ahoy`, `matey`, `Rrrr!` and so on.
+  any:
+    - [Aa]hoy
+    - [Mm]atey
+    - ([AR]a*|Ya+)rrr+!
 ```
