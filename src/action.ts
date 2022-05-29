@@ -1,12 +1,13 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import * as yaml from 'js-yaml'
+import { Expression, isMatch } from './expression'
 
 type Github = ReturnType<typeof github.getOctokit>;
 
 interface Configuration {
   [label: string]: {
-    pattern: RegExp;
+    expression: Expression
     removeOnMissing: boolean;
   };
 }
@@ -64,13 +65,20 @@ function removeLabels (gh: Github, issueNumber: number, labels: string[]) {
 async function getConfiguration (gh: Github, path: string): Promise<Configuration> {
   const configString = yaml.load(await getContent(gh, path)) as any
   return Object.entries(configString).reduce((a, [key, value]) => {
-    const n: any = value
-    if (typeof n?.pattern === 'string') {
+    if (Array.isArray(value)) {
       a[key] = {
-        pattern: new RegExp(n.pattern),
-        removeOnMissing: n.removeOnMissing ?? false
+        expression: value,
+        removeOnMissing: false
+      }
+    } else {
+      const item = value as { [key: string]: unknown }
+      const { removeOnMissing, ...expression } = item
+      a[key] = {
+        expression,
+        removeOnMissing: typeof removeOnMissing === 'boolean' && removeOnMissing
       }
     }
+
     return a
   }, {} as Configuration)
 }
@@ -94,7 +102,7 @@ export async function main () {
   const config = await getConfiguration(gh, configPath)
   for (const label in config) {
     const labelConfig = config[label]
-    if (labelConfig.pattern.test(issueBody)) {
+    if (isMatch({ body: issueBody }, labelConfig.expression)) {
       labelsAdding.push(label)
     } else {
       if (labelConfig.removeOnMissing) {
