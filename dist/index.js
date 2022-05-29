@@ -38,11 +38,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.main = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const yaml = __importStar(__nccwpck_require__(1917));
+const expression_1 = __nccwpck_require__(2760);
 function getIssueNumber() {
     if (github.context.payload.issue)
         return github.context.payload.issue.number;
@@ -97,12 +109,18 @@ function getConfiguration(gh, path) {
     return __awaiter(this, void 0, void 0, function* () {
         const configString = yaml.load(yield getContent(gh, path));
         return Object.entries(configString).reduce((a, [key, value]) => {
-            var _a;
-            const n = value;
-            if (typeof (n === null || n === void 0 ? void 0 : n.pattern) === 'string') {
+            if (Array.isArray(value)) {
                 a[key] = {
-                    pattern: new RegExp(n.pattern),
-                    removeOnMissing: (_a = n.removeOnMissing) !== null && _a !== void 0 ? _a : false
+                    expression: value,
+                    removeOnMissing: false
+                };
+            }
+            else {
+                const item = value;
+                const { removeOnMissing } = item, expression = __rest(item, ["removeOnMissing"]);
+                a[key] = {
+                    expression,
+                    removeOnMissing: typeof removeOnMissing === 'boolean' && removeOnMissing
                 };
             }
             return a;
@@ -125,7 +143,7 @@ function main() {
         const config = yield getConfiguration(gh, configPath);
         for (const label in config) {
             const labelConfig = config[label];
-            if (labelConfig.pattern.test(issueBody)) {
+            if ((0, expression_1.isMatch)({ body: issueBody }, labelConfig.expression)) {
                 labelsAdding.push(label);
             }
             else {
@@ -143,6 +161,71 @@ function main() {
     });
 }
 exports.main = main;
+
+
+/***/ }),
+
+/***/ 2760:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.isMatch = void 0;
+function hasOwnProperty(o, key) {
+    return Object.prototype.hasOwnProperty.call(o, key);
+}
+function cast(e, key) {
+    if (hasOwnProperty(e, key)) {
+        return e;
+    }
+}
+function isMatchAllExpression(d, exps) {
+    if (Array.isArray(exps)) {
+        for (const e of exps) {
+            if (!isMatch(d, e)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    for (const e of exps.all) {
+        if (!isMatch(d, e)) {
+            return false;
+        }
+    }
+    return true;
+}
+function isMatchAnyExpression(d, exp) {
+    for (const e of exp.any) {
+        if (isMatch(d, e)) {
+            return true;
+        }
+    }
+    return false;
+}
+function isMatch(d, e) {
+    if (typeof e === 'string') {
+        return new RegExp(e).test(d.body);
+    }
+    if (Array.isArray(e)) {
+        return isMatchAllExpression(d, e);
+    }
+    const patternExp = cast(e, 'pattern');
+    if (patternExp) {
+        return new RegExp(patternExp.pattern).test(d.body);
+    }
+    const anyExp = cast(e, 'any');
+    if (anyExp) {
+        return isMatchAnyExpression(d, anyExp);
+    }
+    const allExp = cast(e, 'all');
+    if (allExp) {
+        return isMatchAllExpression(d, allExp);
+    }
+    return false;
+}
+exports.isMatch = isMatch;
 
 
 /***/ }),
