@@ -1,7 +1,8 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import { Api } from '@octokit/plugin-rest-endpoint-methods/dist-types/types'
 import * as yaml from 'js-yaml'
+
+type Github = ReturnType<typeof github.getOctokit>;
 
 interface Configuration {
   [label: string]: {
@@ -18,7 +19,7 @@ function getIssueBody (): string | undefined {
   return github.context.payload.issue?.body
 }
 
-async function getContent (gh: Api, path: string) {
+async function getContent (gh: Github, path: string) {
   const r = await gh.rest.repos.getContent({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
@@ -30,7 +31,7 @@ async function getContent (gh: Api, path: string) {
   return Buffer.from(data.content, data.encoding).toString()
 }
 
-async function addLabels (gh: Api, issueNumber: number, labels: string[]) {
+async function addLabels (gh: Github, issueNumber: number, labels: string[]) {
   try {
     await gh.rest.issues.addLabels({
       owner: github.context.repo.owner,
@@ -43,7 +44,7 @@ async function addLabels (gh: Api, issueNumber: number, labels: string[]) {
   }
 }
 
-function removeLabels (gh: Api, issueNumber: number, labels: string[]) {
+function removeLabels (gh: Github, issueNumber: number, labels: string[]) {
   return Promise.all(
     labels.map(async (label) => {
       try {
@@ -60,7 +61,7 @@ function removeLabels (gh: Api, issueNumber: number, labels: string[]) {
   )
 }
 
-async function getConfiguration (gh: Api, path: string): Promise<Configuration> {
+async function getConfiguration (gh: Github, path: string): Promise<Configuration> {
   const configString = yaml.load(await getContent(gh, path)) as any
   return Object.entries(configString).reduce((a, [key, value]) => {
     const n: any = value
