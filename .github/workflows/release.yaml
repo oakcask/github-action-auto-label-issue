@@ -21,6 +21,7 @@ jobs:
         with:
           committer_name: GitHub Actions
           committer_email: 41898282+github-actions[bot]@users.noreply.github.com
+          message: "chore(dist): update artifacts to release"
           add: dist/
       - uses: cycjimmy/semantic-release-action@v3
         env:
