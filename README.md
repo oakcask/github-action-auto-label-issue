@@ -51,7 +51,7 @@ For more complecated use cases, we can utilize complex expressions like:
 ```yaml
 bat:
   # Matches against phrase like "bat is animal and has wings".
-  # but "birds has wings." won't match.
+  # but "birds have wings." won't match.
   all:
     - wings?
     - animal
