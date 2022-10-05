@@ -19,7 +19,7 @@ jobs:
   mark:
     runs-on: ubuntu-latest
     steps:
-      - uses: oakcask/github-action-auto-label-issue@v0.1
+      - uses: oakcask/github-action-auto-label-issue@v1
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           configuration-path: .github/auto-label.yml
