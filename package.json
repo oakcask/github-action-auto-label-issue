@@ -26,7 +26,7 @@
     "eslint-plugin-promise": "^6.0.1",
     "jest": "^28.1.0",
     "semantic-release": "^19.0.5",
-    "semantic-release-tags": "^1.0.2",
+    "semantic-release-tags": "^2.0.0",
     "ts-jest": "^28.0.8",
     "typescript": "^4.8.4"
   },
