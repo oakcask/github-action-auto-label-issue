@@ -1,14 +1,20 @@
-name: Auto-merge minor/patch
-on:
-  schedule:
-    - cron: "0 0 * * *"
+name: Dependabot
+on: pull_request
+permissions:
+  pull-requests: write
+  contents: write
 jobs:
   auto-merge:
     name: Auto-merge Dependabot Pull Requests
     runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
     steps:
-      - uses: koj-co/dependabot-pr-action@v1.0.0
+      - uses: dependabot/fetch-metadata@v1.3.4
+        id: metadata
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          merge-minor: true
-          merge-patch: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - if: ${{ steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor' }}
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
