@@ -1,3 +1,5 @@
+[![CI Status](https://github.com/oakcask/github-action-auto-label-issue/actions/workflows/check.yaml/badge.svg)](https://github.com/oakcask/github-action-auto-label-issue/actions/workflows/check.yaml)
+
 # github-action-auto-label-issue
 
 This is yet another github.com/github/labeler clone.
