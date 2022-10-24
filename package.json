@@ -23,7 +23,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^27.1.2",
     "eslint-plugin-n": "^15.3.0",
-    "eslint-plugin-promise": "^6.1.0",
+    "eslint-plugin-promise": "^6.1.1",
     "jest": "^28.1.0",
     "semantic-release": "^19.0.5",
     "semantic-release-tags": "^2.0.0",
