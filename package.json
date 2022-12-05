@@ -11,7 +11,7 @@
   "author": "oakcask",
   "license": "MIT",
   "devDependencies": {
-    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/changelog": "^6.0.2",
     "@semantic-release/github": "^8.0.7",
     "@types/jest": "^27.5.1",
     "@types/js-yaml": "^4.0.5",
