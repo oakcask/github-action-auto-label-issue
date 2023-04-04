@@ -12,3 +12,17 @@ label-test:cow:
 # add regex label when the specified regular expression pattern is matching.
 label-test:regex:
   pattern: "[Tt]he.*\\."
+label-test:pirate:
+  # To detect pirates in issue, check any appearences of `Ahoy`, `matey`, `Rrrr!` and so on.
+  any:
+    - [Aa]hoy
+    - [Mm]atey
+    - ([AR]a*|Ya+)rrr+!
+
+# If the pirate talks about "rum", he must be a caribbean pirate.
+label-test:pirate:caribbean:
+  - label: label-test:rum
+  - any:
+      - [Aa]hoy
+      - [Mm]atey
+      - ([AR]a*|Ya+)rrr+!
