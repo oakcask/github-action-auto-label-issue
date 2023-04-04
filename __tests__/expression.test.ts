@@ -11,20 +11,20 @@ describe('isMatch', () => {
     [{ body: 'alice' }, { any: ['a', 'b'] }, true],
     [{ body: '' }, {}, false],
 
-    [{ body: 'alice', labels: ['foo', 'bar'] }, { any: [{ label: 'foo' }, { label: 'bar' }]}, true ],
-    [{ body: 'alice', labels: ['foo'] }, { any: [{ label: 'foo' }, { label: 'bar' }]}, true ],
-    [{ body: 'alice', labels: ['bar'] }, { any: [{ label: 'foo' }, { label: 'bar' }]}, true ],
+    [{ body: 'alice', labels: ['foo', 'bar'] }, { any: [{ label: 'foo' }, { label: 'bar' }] }, true],
+    [{ body: 'alice', labels: ['foo'] }, { any: [{ label: 'foo' }, { label: 'bar' }] }, true],
+    [{ body: 'alice', labels: ['bar'] }, { any: [{ label: 'foo' }, { label: 'bar' }] }, true],
 
-    [{ body: 'alice', labels: ['foo', 'bar'] }, { all: [{ label: 'foo' }, { label: 'bar' }]}, true ],
-    [{ body: 'alice', labels: ['foo'] }, { all: [{ label: 'foo' }, { label: 'bar' }]}, false ],
-    [{ body: 'alice', labels: ['bar'] }, { all: [{ label: 'foo' }, { label: 'bar' }]}, false ],
-    [{ body: 'alice', labels: ['foo', 'bar'] }, [{ label: 'foo' }, { label: 'bar' }], true ],
-    [{ body: 'alice', labels: ['foo'] }, [{ label: 'foo' }, { label: 'bar' }], false ],
-    [{ body: 'alice', labels: ['bar'] }, [{ label: 'foo' }, { label: 'bar' }], false ],
+    [{ body: 'alice', labels: ['foo', 'bar'] }, { all: [{ label: 'foo' }, { label: 'bar' }] }, true],
+    [{ body: 'alice', labels: ['foo'] }, { all: [{ label: 'foo' }, { label: 'bar' }] }, false],
+    [{ body: 'alice', labels: ['bar'] }, { all: [{ label: 'foo' }, { label: 'bar' }] }, false],
+    [{ body: 'alice', labels: ['foo', 'bar'] }, [{ label: 'foo' }, { label: 'bar' }], true],
+    [{ body: 'alice', labels: ['foo'] }, [{ label: 'foo' }, { label: 'bar' }], false],
+    [{ body: 'alice', labels: ['bar'] }, [{ label: 'foo' }, { label: 'bar' }], false],
 
-    [{ body: 'alice', labels: ['foo'] }, ['alice', { label: 'foo' }], true ],
-    [{ body: 'alice', labels: ['foo'] }, { all: ['alice', { label: 'foo' }] }, true ],
-    [{ body: 'bob', labels: ['bar'] }, { any: ['alice', { label: 'foo' }] }, false ],
+    [{ body: 'alice', labels: ['foo'] }, ['alice', { label: 'foo' }], true],
+    [{ body: 'alice', labels: ['foo'] }, { all: ['alice', { label: 'foo' }] }, true],
+    [{ body: 'bob', labels: ['bar'] }, { any: ['alice', { label: 'foo' }] }, false]
   ]
 
   it.each(testCases)('for given document %j and expression %j, returns %p', async (doc, exp, outcome) => {

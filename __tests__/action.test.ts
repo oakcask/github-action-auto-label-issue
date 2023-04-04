@@ -18,7 +18,7 @@ jest.spyOn(gh, 'graphql').mockImplementationOnce(async (_query, _variables) => (
         nodes: [{
           id: '',
           name: 'foo',
-          resourcePath: '',
+          resourcePath: ''
         }]
       }
     }
