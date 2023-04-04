@@ -55,6 +55,7 @@ const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const yaml = __importStar(__nccwpck_require__(1917));
 const expression_1 = __nccwpck_require__(2760);
+const issue_1 = __nccwpck_require__(6018);
 function getIssueNumber() {
     if (github.context.payload.issue)
         return github.context.payload.issue.number;
@@ -127,6 +128,15 @@ function getConfiguration(gh, path) {
         }, {});
     });
 }
+function getIssueLabels(gh, issueNumber) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield (0, issue_1.enumerateIssueLabels)(gh, {
+            repo: github.context.repo.repo,
+            owner: github.context.repo.owner,
+            issueNumber
+        });
+    });
+}
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const token = core.getInput('repo-token', { required: true });
@@ -140,10 +150,11 @@ function main() {
         const gh = github.getOctokit(token);
         const labelsAdding = [];
         const labelsRemoving = [];
+        const issueLabels = yield getIssueLabels(gh, issueNumber);
         const config = yield getConfiguration(gh, configPath);
         for (const label in config) {
             const labelConfig = config[label];
-            if ((0, expression_1.isMatch)({ body: issueBody }, labelConfig.expression)) {
+            if ((0, expression_1.isMatch)({ body: issueBody, labels: issueLabels }, labelConfig.expression)) {
                 labelsAdding.push(label);
             }
             else {
@@ -215,6 +226,10 @@ function isMatch(d, e) {
     if (patternExp) {
         return new RegExp(patternExp.pattern).test(d.body);
     }
+    const labelExp = cast(e, 'label');
+    if (labelExp) {
+        return d.labels.find(o => o === labelExp.label) !== undefined;
+    }
     const anyExp = cast(e, 'any');
     if (anyExp) {
         return isMatchAnyExpression(d, anyExp);
@@ -226,6 +241,102 @@ function isMatch(d, e) {
     return false;
 }
 exports.isMatch = isMatch;
+
+
+/***/ }),
+
+/***/ 5928:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.queryNextIssueLabels = void 0;
+function query(gh, query, variables) {
+    return gh.graphql(query, variables);
+}
+const nextIssueLabelsQuery = /* GraphQL */ `
+  query nextIssueLabels($repo: String!, $owner: String!, $issueNumber: Int!, $pageSize: Int!, $lastEndCursor: String) {
+    repository(name: $repo, owner: $owner) {
+      issue(number: $issueNumber) {
+        labels(first: $pageSize, after: $lastEndCursor) {
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          nodes {
+            id
+            name
+            resourcePath
+          }
+        }
+      }
+    }
+  }
+`;
+function queryNextIssueLabels(gh, variables) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield query(gh, nextIssueLabelsQuery, variables);
+    });
+}
+exports.queryNextIssueLabels = queryNextIssueLabels;
+
+
+/***/ }),
+
+/***/ 6018:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.enumerateIssueLabels = void 0;
+const github_1 = __nccwpck_require__(5928);
+function enumerateIssueLabels(gh, { repo, owner, issueNumber }) {
+    var _a, _b, _c;
+    return __awaiter(this, void 0, void 0, function* () {
+        const labels = [];
+        let lastEndCursor = undefined;
+        let done = false;
+        while (!done) {
+            const res = yield (0, github_1.queryNextIssueLabels)(gh, {
+                repo, owner, issueNumber, pageSize: 100, lastEndCursor,
+            });
+            if (!((_c = (_b = (_a = res.repository) === null || _a === void 0 ? void 0 : _a.issue) === null || _b === void 0 ? void 0 : _b.labels) === null || _c === void 0 ? void 0 : _c.nodes)) {
+                throw Error("failed to query issue labels");
+            }
+            const { endCursor, hasNextPage } = res.repository.issue.labels.pageInfo;
+            for (let node of res.repository.issue.labels.nodes) {
+                if (node === null || node === void 0 ? void 0 : node.name) {
+                    labels.push(node.name);
+                }
+                node === null || node === void 0 ? void 0 : node.name;
+            }
+            lastEndCursor = endCursor !== null && endCursor !== void 0 ? endCursor : undefined;
+            done = !hasNextPage;
+        }
+        return labels;
+    });
+}
+exports.enumerateIssueLabels = enumerateIssueLabels;
 
 
 /***/ }),
@@ -2281,7 +2392,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 var universalUserAgent = __nccwpck_require__(5030);
 var beforeAfterHook = __nccwpck_require__(3682);
 var request = __nccwpck_require__(6234);
-var graphql = __nccwpck_require__(8467);
+var graphql = __nccwpck_require__(6442);
 var authToken = __nccwpck_require__(334);
 
 function _objectWithoutPropertiesLoose(source, excluded) {
@@ -2449,6 +2560,132 @@ Octokit.VERSION = VERSION;
 Octokit.plugins = [];
 
 exports.Octokit = Octokit;
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ 6442:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+var request = __nccwpck_require__(6234);
+var universalUserAgent = __nccwpck_require__(5030);
+
+const VERSION = "4.8.0";
+
+function _buildMessageForResponseErrors(data) {
+  return `Request failed due to following response errors:\n` + data.errors.map(e => ` - ${e.message}`).join("\n");
+}
+
+class GraphqlResponseError extends Error {
+  constructor(request, headers, response) {
+    super(_buildMessageForResponseErrors(response));
+    this.request = request;
+    this.headers = headers;
+    this.response = response;
+    this.name = "GraphqlResponseError"; // Expose the errors and response data in their shorthand properties.
+
+    this.errors = response.errors;
+    this.data = response.data; // Maintains proper stack trace (only available on V8)
+
+    /* istanbul ignore next */
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
+  }
+
+}
+
+const NON_VARIABLE_OPTIONS = ["method", "baseUrl", "url", "headers", "request", "query", "mediaType"];
+const FORBIDDEN_VARIABLE_OPTIONS = ["query", "method", "url"];
+const GHES_V3_SUFFIX_REGEX = /\/api\/v3\/?$/;
+function graphql(request, query, options) {
+  if (options) {
+    if (typeof query === "string" && "query" in options) {
+      return Promise.reject(new Error(`[@octokit/graphql] "query" cannot be used as variable name`));
+    }
+
+    for (const key in options) {
+      if (!FORBIDDEN_VARIABLE_OPTIONS.includes(key)) continue;
+      return Promise.reject(new Error(`[@octokit/graphql] "${key}" cannot be used as variable name`));
+    }
+  }
+
+  const parsedOptions = typeof query === "string" ? Object.assign({
+    query
+  }, options) : query;
+  const requestOptions = Object.keys(parsedOptions).reduce((result, key) => {
+    if (NON_VARIABLE_OPTIONS.includes(key)) {
+      result[key] = parsedOptions[key];
+      return result;
+    }
+
+    if (!result.variables) {
+      result.variables = {};
+    }
+
+    result.variables[key] = parsedOptions[key];
+    return result;
+  }, {}); // workaround for GitHub Enterprise baseUrl set with /api/v3 suffix
+  // https://github.com/octokit/auth-app.js/issues/111#issuecomment-657610451
+
+  const baseUrl = parsedOptions.baseUrl || request.endpoint.DEFAULTS.baseUrl;
+
+  if (GHES_V3_SUFFIX_REGEX.test(baseUrl)) {
+    requestOptions.url = baseUrl.replace(GHES_V3_SUFFIX_REGEX, "/api/graphql");
+  }
+
+  return request(requestOptions).then(response => {
+    if (response.data.errors) {
+      const headers = {};
+
+      for (const key of Object.keys(response.headers)) {
+        headers[key] = response.headers[key];
+      }
+
+      throw new GraphqlResponseError(requestOptions, headers, response.data);
+    }
+
+    return response.data.data;
+  });
+}
+
+function withDefaults(request$1, newDefaults) {
+  const newRequest = request$1.defaults(newDefaults);
+
+  const newApi = (query, options) => {
+    return graphql(newRequest, query, options);
+  };
+
+  return Object.assign(newApi, {
+    defaults: withDefaults.bind(null, newRequest),
+    endpoint: request.request.endpoint
+  });
+}
+
+const graphql$1 = withDefaults(request.request, {
+  headers: {
+    "user-agent": `octokit-graphql.js/${VERSION} ${universalUserAgent.getUserAgent()}`
+  },
+  method: "POST",
+  url: "/graphql"
+});
+function withCustomRequest(customRequest) {
+  return withDefaults(customRequest, {
+    method: "POST",
+    url: "/graphql"
+  });
+}
+
+exports.GraphqlResponseError = GraphqlResponseError;
+exports.graphql = graphql$1;
+exports.withCustomRequest = withCustomRequest;
 //# sourceMappingURL=index.js.map
 
 
@@ -2847,132 +3084,6 @@ const DEFAULTS = {
 const endpoint = withDefaults(null, DEFAULTS);
 
 exports.endpoint = endpoint;
-//# sourceMappingURL=index.js.map
-
-
-/***/ }),
-
-/***/ 8467:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-
-var request = __nccwpck_require__(6234);
-var universalUserAgent = __nccwpck_require__(5030);
-
-const VERSION = "4.8.0";
-
-function _buildMessageForResponseErrors(data) {
-  return `Request failed due to following response errors:\n` + data.errors.map(e => ` - ${e.message}`).join("\n");
-}
-
-class GraphqlResponseError extends Error {
-  constructor(request, headers, response) {
-    super(_buildMessageForResponseErrors(response));
-    this.request = request;
-    this.headers = headers;
-    this.response = response;
-    this.name = "GraphqlResponseError"; // Expose the errors and response data in their shorthand properties.
-
-    this.errors = response.errors;
-    this.data = response.data; // Maintains proper stack trace (only available on V8)
-
-    /* istanbul ignore next */
-
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
-    }
-  }
-
-}
-
-const NON_VARIABLE_OPTIONS = ["method", "baseUrl", "url", "headers", "request", "query", "mediaType"];
-const FORBIDDEN_VARIABLE_OPTIONS = ["query", "method", "url"];
-const GHES_V3_SUFFIX_REGEX = /\/api\/v3\/?$/;
-function graphql(request, query, options) {
-  if (options) {
-    if (typeof query === "string" && "query" in options) {
-      return Promise.reject(new Error(`[@octokit/graphql] "query" cannot be used as variable name`));
-    }
-
-    for (const key in options) {
-      if (!FORBIDDEN_VARIABLE_OPTIONS.includes(key)) continue;
-      return Promise.reject(new Error(`[@octokit/graphql] "${key}" cannot be used as variable name`));
-    }
-  }
-
-  const parsedOptions = typeof query === "string" ? Object.assign({
-    query
-  }, options) : query;
-  const requestOptions = Object.keys(parsedOptions).reduce((result, key) => {
-    if (NON_VARIABLE_OPTIONS.includes(key)) {
-      result[key] = parsedOptions[key];
-      return result;
-    }
-
-    if (!result.variables) {
-      result.variables = {};
-    }
-
-    result.variables[key] = parsedOptions[key];
-    return result;
-  }, {}); // workaround for GitHub Enterprise baseUrl set with /api/v3 suffix
-  // https://github.com/octokit/auth-app.js/issues/111#issuecomment-657610451
-
-  const baseUrl = parsedOptions.baseUrl || request.endpoint.DEFAULTS.baseUrl;
-
-  if (GHES_V3_SUFFIX_REGEX.test(baseUrl)) {
-    requestOptions.url = baseUrl.replace(GHES_V3_SUFFIX_REGEX, "/api/graphql");
-  }
-
-  return request(requestOptions).then(response => {
-    if (response.data.errors) {
-      const headers = {};
-
-      for (const key of Object.keys(response.headers)) {
-        headers[key] = response.headers[key];
-      }
-
-      throw new GraphqlResponseError(requestOptions, headers, response.data);
-    }
-
-    return response.data.data;
-  });
-}
-
-function withDefaults(request$1, newDefaults) {
-  const newRequest = request$1.defaults(newDefaults);
-
-  const newApi = (query, options) => {
-    return graphql(newRequest, query, options);
-  };
-
-  return Object.assign(newApi, {
-    defaults: withDefaults.bind(null, newRequest),
-    endpoint: request.request.endpoint
-  });
-}
-
-const graphql$1 = withDefaults(request.request, {
-  headers: {
-    "user-agent": `octokit-graphql.js/${VERSION} ${universalUserAgent.getUserAgent()}`
-  },
-  method: "POST",
-  url: "/graphql"
-});
-function withCustomRequest(customRequest) {
-  return withDefaults(customRequest, {
-    method: "POST",
-    url: "/graphql"
-  });
-}
-
-exports.GraphqlResponseError = GraphqlResponseError;
-exports.graphql = graphql$1;
-exports.withCustomRequest = withCustomRequest;
 //# sourceMappingURL=index.js.map
 
 
