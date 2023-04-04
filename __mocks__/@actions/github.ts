@@ -20,7 +20,8 @@ const mockApi = {
     repos: {
       getContent: jest.fn()
     }
-  }
+  },
+  graphql: jest.fn()
 }
 
 export const getOctokit = jest.fn().mockImplementation(() => mockApi)

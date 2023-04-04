@@ -2,6 +2,7 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import * as yaml from 'js-yaml'
 import { Expression, isMatch } from './expression'
+import { enumerateIssueLabels } from './issue';
 
 type Github = ReturnType<typeof github.getOctokit>;
 
@@ -83,6 +84,14 @@ async function getConfiguration (gh: Github, path: string): Promise<Configuratio
   }, {} as Configuration)
 }
 
+async function getIssueLabels(gh: Github, issueNumber: number) {
+  return await enumerateIssueLabels(gh, {
+    repo: github.context.repo.repo,
+    owner: github.context.repo.owner,
+    issueNumber
+  })
+}
+
 export async function main () {
   const token = core.getInput('repo-token', { required: true })
   const configPath = core.getInput('configuration-path', { required: true })
@@ -98,11 +107,12 @@ export async function main () {
   const gh = github.getOctokit(token)
   const labelsAdding: string[] = []
   const labelsRemoving: string[] = []
+  const issueLabels: string[] = await getIssueLabels(gh, issueNumber)
 
   const config = await getConfiguration(gh, configPath)
   for (const label in config) {
     const labelConfig = config[label]
-    if (isMatch({ body: issueBody }, labelConfig.expression)) {
+    if (isMatch({ body: issueBody, labels: issueLabels }, labelConfig.expression)) {
       labelsAdding.push(label)
     } else {
       if (labelConfig.removeOnMissing) {

@@ -18,5 +18,8 @@
         "jest"
     ],
     "rules": {
-    }
+    },
+    "ignorePatterns": [
+        "**/generated/*.ts"
+    ]
 }
