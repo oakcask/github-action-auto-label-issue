@@ -7,6 +7,24 @@ const gh = github.getOctokit('_')
 const addLabels = jest.spyOn(gh.rest.issues, 'addLabels')
 const removeLabel = jest.spyOn(gh.rest.issues, 'removeLabel')
 const getContent = jest.spyOn(gh.rest.repos, 'getContent')
+jest.spyOn(gh, 'graphql').mockImplementationOnce(async (_query, _variables) => ({
+  repository: {
+    issue: {
+      labels: {
+        pageInfo: {
+          endCursor: null,
+          hasNextPage: false
+        },
+        nodes: [{
+          id: '',
+          name: 'foo',
+          resourcePath: ''
+        }]
+      }
+    }
+  }
+}))
+
 jest.spyOn(core, 'getInput').mockImplementation((key) => {
   return (
     {

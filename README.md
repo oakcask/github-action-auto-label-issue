@@ -70,4 +70,12 @@ pirate:
     - [Aa]hoy
     - [Mm]atey
     - ([AR]a*|Ya+)rrr+!
+
+# If the pirate talks about "rum", he must be a caribbean pirate.
+pirate:caribbean:
+  - label: rum
+  - any:
+      - [Aa]hoy
+      - [Mm]atey
+      - ([AR]a*|Ya+)rrr+!
 ```

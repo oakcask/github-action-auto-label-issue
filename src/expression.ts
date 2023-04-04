@@ -6,6 +6,10 @@ interface AllExpression<T> {
   all: T[]
 }
 
+interface LabelExpression {
+  label: string
+}
+
 // provides compatiblity
 interface PatternExpression {
   pattern: string
@@ -13,12 +17,14 @@ interface PatternExpression {
 
 export type Expression = AnyExpression<Expression> |
   AllExpression<Expression> |
+  LabelExpression |
   PatternExpression |
   string |
   Expression[] | { [key: string]: unknown };
 
 export interface Document {
-  body: string
+  body: string,
+  labels: string[]
 }
 
 function hasOwnProperty (o: any, key: string) {
@@ -69,6 +75,10 @@ export function isMatch (d: Document, e: Expression): boolean {
   const patternExp = cast<PatternExpression>(e, 'pattern')
   if (patternExp) {
     return new RegExp(patternExp.pattern).test(d.body)
+  }
+  const labelExp = cast<LabelExpression>(e, 'label')
+  if (labelExp) {
+    return d.labels.find(o => o === labelExp.label) !== undefined
   }
   const anyExp = cast<AnyExpression<Expression>>(e, 'any')
   if (anyExp) {

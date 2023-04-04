@@ -6,11 +6,16 @@
     "build": "tsc && ncc build lib/main.js",
     "test": "jest",
     "format:all": "eslint --fix ./*.js src/**/*.ts __tests__/**/*.ts __mocks__/**/*.ts",
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "graphql-codegen": "graphql-codegen --config graphql-codegen.yml"
   },
   "author": "oakcask",
   "license": "MIT",
   "devDependencies": {
+    "@graphql-codegen/cli": "^3.3.0",
+    "@graphql-codegen/introspection": "^3.0.1",
+    "@graphql-codegen/typescript": "^3.0.3",
+    "@graphql-codegen/typescript-operations": "^3.0.3",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/github": "^8.0.7",
     "@types/jest": "^29.5.0",
@@ -33,6 +38,7 @@
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1",
+    "@octokit/graphql": "^5.0.5",
     "js-yaml": "^4.1.0",
     "tunnel": "^0.0.6"
   }
