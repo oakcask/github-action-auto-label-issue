@@ -67,15 +67,15 @@ bat2:
 pirate:
   # To detect pirates in issue, check any appearences of `Ahoy`, `matey`, `Rrrr!` and so on.
   any:
-    - [Aa]hoy
-    - [Mm]atey
+    - "[Aa]hoy"
+    - "[Mm]atey"
     - ([AR]a*|Ya+)rrr+!
 
 # If the pirate talks about "rum", he must be a caribbean pirate.
 pirate:caribbean:
   - label: rum
   - any:
-      - [Aa]hoy
-      - [Mm]atey
+      - "[Aa]hoy"
+      - "[Mm]atey"
       - ([AR]a*|Ya+)rrr+!
 ```
