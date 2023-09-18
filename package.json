@@ -19,7 +19,7 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/github": "^9.0.4",
     "@types/jest": "^29.5.4",
-    "@types/js-yaml": "^4.0.5",
+    "@types/js-yaml": "^4.0.6",
     "@typescript-eslint/eslint-plugin": "^5.61.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@vercel/ncc": "^0.36.1",
