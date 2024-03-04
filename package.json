@@ -15,7 +15,7 @@
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/introspection": "^4.0.2",
     "@graphql-codegen/typescript": "^4.0.1",
-    "@graphql-codegen/typescript-operations": "^4.0.1",
+    "@graphql-codegen/typescript-operations": "^4.2.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/github": "^9.2.6",
     "@types/jest": "^29.5.12",
