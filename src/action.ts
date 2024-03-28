@@ -2,7 +2,7 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import * as yaml from 'js-yaml'
 import { Expression, isMatch } from './expression'
-import { enumerateIssueLabels } from './issue';
+import { enumerateIssueLabels } from './issue'
 
 type Github = ReturnType<typeof github.getOctokit>;
 
@@ -84,7 +84,7 @@ async function getConfiguration (gh: Github, path: string): Promise<Configuratio
   }, {} as Configuration)
 }
 
-async function getIssueLabels(gh: Github, issueNumber: number) {
+async function getIssueLabels (gh: Github, issueNumber: number) {
   return await enumerateIssueLabels(gh, {
     repo: github.context.repo.repo,
     owner: github.context.repo.owner,

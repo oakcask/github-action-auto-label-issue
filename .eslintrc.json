@@ -20,6 +20,11 @@
     "rules": {
     },
     "ignorePatterns": [
-        "**/generated/*.ts"
+        "**/generated/*.ts",
+        "dist/**"
+    ],
+    "overrides": [
+        // let eslint scan *.ts
+        { "files": ["*.ts", "*.js"] }
     ]
 }

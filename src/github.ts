@@ -12,7 +12,7 @@ function query<TQuery extends Query> (gh: Github, query: string, variables: Requ
   return gh.graphql<TQuery>(query, variables)
 }
 
-const nextIssueLabelsQuery  = /* GraphQL */ `
+const nextIssueLabelsQuery = /* GraphQL */ `
   query nextIssueLabels($repo: String!, $owner: String!, $issueNumber: Int!, $pageSize: Int!, $lastEndCursor: String) {
     repository(name: $repo, owner: $owner) {
       issue(number: $issueNumber) {
