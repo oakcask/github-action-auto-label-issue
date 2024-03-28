@@ -19,4 +19,5 @@ jobs:
       - uses: int128/update-generated-files-action@v2
         with:
           commit-message: "style: `$ npm run format:all`"
+          token: ${{ secrets.GITHUB_TOKEN  }}
       - run: npm run test
