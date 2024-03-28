@@ -314,21 +314,20 @@ function enumerateIssueLabels(gh_1, _a) {
     return __awaiter(this, arguments, void 0, function* (gh, { repo, owner, issueNumber }) {
         var _b, _c, _d;
         const labels = [];
-        let lastEndCursor = undefined;
+        let lastEndCursor;
         let done = false;
         while (!done) {
             const res = yield (0, github_1.queryNextIssueLabels)(gh, {
-                repo, owner, issueNumber, pageSize: 100, lastEndCursor,
+                repo, owner, issueNumber, pageSize: 100, lastEndCursor
             });
             if (!((_d = (_c = (_b = res.repository) === null || _b === void 0 ? void 0 : _b.issue) === null || _c === void 0 ? void 0 : _c.labels) === null || _d === void 0 ? void 0 : _d.nodes)) {
-                throw Error("failed to query issue labels");
+                throw Error('failed to query issue labels');
             }
             const { endCursor, hasNextPage } = res.repository.issue.labels.pageInfo;
-            for (let node of res.repository.issue.labels.nodes) {
+            for (const node of res.repository.issue.labels.nodes) {
                 if (node === null || node === void 0 ? void 0 : node.name) {
                     labels.push(node.name);
                 }
-                node === null || node === void 0 ? void 0 : node.name;
             }
             lastEndCursor = endCursor !== null && endCursor !== void 0 ? endCursor : undefined;
             done = !hasNextPage;
