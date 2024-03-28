@@ -1,12 +1,12 @@
 name: Check
 on:
-  push:
-    branches-ignore:
-      - main
-permissions: write-all
+  pull_request:
+
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -16,9 +16,7 @@ jobs:
           node-version-file: '.node-version'
       - run: npm ci
       - run: npm run format:all
-      - uses: EndBug/add-and-commit@v9
+      - uses: int128/update-generated-files-action@v2
         with:
-          committer_name: GitHub Actions
-          committer_email: 41898282+github-actions[bot]@users.noreply.github.com
-          message: "style: `$ npm run format:all`"
+          commit-message: "style: `$ npm run format:all`"
       - run: npm run test
