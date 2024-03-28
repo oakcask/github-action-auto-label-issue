@@ -9,7 +9,7 @@ type Query = {
 }
 
 function query<TQuery extends Query> (gh: Github, query: string, variables: RequestParameters): Promise<TQuery> {
-    return gh.graphql<TQuery>(query, variables)
+  return gh.graphql<TQuery>(query, variables)
 }
 
 const nextIssueLabelsQuery = /* GraphQL */ `
