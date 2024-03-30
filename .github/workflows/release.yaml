@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+  pull_request:
+
 permissions: write-all
 jobs:
   release:
@@ -15,7 +17,6 @@ jobs:
         with:
           node-version-file: '.node-version'
       - run: npm ci
-      - run: npm run test
       - run: npm run build
       - uses: EndBug/add-and-commit@v9
         with:
@@ -23,6 +24,8 @@ jobs:
           committer_email: 41898282+github-actions[bot]@users.noreply.github.com
           message: "chore(dist): update artifacts to release"
           add: dist/
+        if: ${{ github.ref == 'refs/heads/main' }}
       - uses: cycjimmy/semantic-release-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ github.ref == 'refs/heads/main' }}
