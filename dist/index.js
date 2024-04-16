@@ -230,6 +230,10 @@ function isMatch(d, e) {
     if (labelExp) {
         return d.labels.find(o => o === labelExp.label) !== undefined;
     }
+    const labelPatExp = cast(e, 'matchLabel');
+    if (labelPatExp) {
+        return d.labels.find(o => new RegExp(labelPatExp.matchLabel).test(o)) !== undefined;
+    }
     const anyExp = cast(e, 'any');
     if (anyExp) {
         return isMatchAnyExpression(d, anyExp);
