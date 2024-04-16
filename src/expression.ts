@@ -85,9 +85,9 @@ export function isMatch (d: Document, e: Expression): boolean {
   if (labelExp) {
     return d.labels.find(o => o === labelExp.label) !== undefined
   }
-  const labelPatExp = cast<LabelPatternExpression>(e, 'matchLabel');
+  const labelPatExp = cast<LabelPatternExpression>(e, 'matchLabel')
   if (labelPatExp) {
-    return d.labels.find(o => new RegExp(labelPatExp.matchLabel).test(o)) !== undefined;
+    return d.labels.find(o => new RegExp(labelPatExp.matchLabel).test(o)) !== undefined
   }
   const anyExp = cast<AnyExpression<Expression>>(e, 'any')
   if (anyExp) {
