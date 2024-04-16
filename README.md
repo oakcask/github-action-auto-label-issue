@@ -72,7 +72,7 @@ pirate:
     - "[Mm]atey"
     - ([AR]a*|Ya+)rrr+!
     # pirate:caribbean, pirate:barbary, prirate:ottoman or any pirates will be also labelled as "pirate".
-    - labelMatch: |-
+    - matchLabel: |-
         ^pirate:
 
 # If the pirate talks about "rum", he must be a caribbean pirate.

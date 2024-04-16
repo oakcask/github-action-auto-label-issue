@@ -18,7 +18,7 @@ label-test:pirate:
     - "[Aa]hoy"
     - "[Mm]atey"
     - ([AR]a*|Ya+)rrr+!
-    - labelMatch: |-
+    - matchLabel: |-
         ^label-test:pirate:
 
 # If the pirate talks about "rum", he must be a caribbean pirate.
