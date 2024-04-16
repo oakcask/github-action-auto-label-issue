@@ -24,7 +24,11 @@ describe('isMatch', () => {
 
     [{ body: 'alice', labels: ['foo'] }, ['alice', { label: 'foo' }], true],
     [{ body: 'alice', labels: ['foo'] }, { all: ['alice', { label: 'foo' }] }, true],
-    [{ body: 'bob', labels: ['bar'] }, { any: ['alice', { label: 'foo' }] }, false]
+    [{ body: 'bob', labels: ['bar'] }, { any: ['alice', { label: 'foo' }] }, false],
+
+    [{ body: '', labels: ['foo:a'] }, { matchLabel: 'foo:a.*' }, true],
+    [{ body: '', labels: ['foo:ab'] }, { matchLabel: 'foo:a.*' }, true],
+    [{ body: '', labels: ['foo:bb'] }, { matchLabel: 'foo:a.*' }, false],
   ]
 
   it.each(testCases)('for given document %j and expression %j, returns %p', async (doc, exp, outcome) => {

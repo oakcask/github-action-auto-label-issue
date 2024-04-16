@@ -38,6 +38,7 @@ fox:
 # add cat label when "cat" is found. Array is also accepted as an "all" expression.
 cat:
   - cat
+
 # add cow label when "cow" is found.
 # remove cow label if "cow" is missing.
 cow:
@@ -70,6 +71,9 @@ pirate:
     - "[Aa]hoy"
     - "[Mm]atey"
     - ([AR]a*|Ya+)rrr+!
+    # pirate:caribbean, pirate:barbary, prirate:ottoman or any pirates will be also labelled as "pirate".
+    - labelMatch: |-
+      ^pirate:
 
 # If the pirate talks about "rum", he must be a caribbean pirate.
 pirate:caribbean:

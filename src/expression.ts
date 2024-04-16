@@ -10,6 +10,10 @@ interface LabelExpression {
   label: string
 }
 
+interface LabelPatternExpression {
+  matchLabel: string
+}
+
 // provides compatiblity
 interface PatternExpression {
   pattern: string
@@ -18,6 +22,7 @@ interface PatternExpression {
 export type Expression = AnyExpression<Expression> |
   AllExpression<Expression> |
   LabelExpression |
+  LabelPatternExpression |
   PatternExpression |
   string |
   Expression[] | { [key: string]: unknown };
@@ -79,6 +84,10 @@ export function isMatch (d: Document, e: Expression): boolean {
   const labelExp = cast<LabelExpression>(e, 'label')
   if (labelExp) {
     return d.labels.find(o => o === labelExp.label) !== undefined
+  }
+  const labelPatExp = cast<LabelPatternExpression>(e, 'matchLabel');
+  if (labelPatExp) {
+    return d.labels.find(o => new RegExp(labelPatExp.matchLabel).test(o)) !== undefined;
   }
   const anyExp = cast<AnyExpression<Expression>>(e, 'any')
   if (anyExp) {
