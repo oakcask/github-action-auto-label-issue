@@ -1,25 +1,25 @@
 # add fox label when "fox" is found
 label-test:fox:
-  label: label-test
-  pattern: fox
+  - label: label-test
+  - pattern: fox
 # add cat label when "cat" is found
 label-test:cat:
-  label: label-test
-  pattern: cat
+  - label: label-test
+  - pattern: cat
 # add cow label when "cow" is found.
 # remove cow label if "cow" is missing.
 label-test:cow:
-  label: label-test
-  pattern: cow
-  removeOnMissing: true
+  - label: label-test
+  - pattern: cow
+  - removeOnMissing: true
 # add regex label when the specified regular expression pattern is matching.
 label-test:regex:
-  label: label-test
-  pattern: "[Tt]he.*\\."
+  - label: label-test
+  - pattern: "[Tt]he.*\\."
 label-test:pirate:
-  label: label-test
+  - label: label-test
   # To detect pirates in issue, check any appearences of `Ahoy`, `matey`, `Rrrr!` and so on.
-  any:
+  - any:
     - "[Aa]hoy"
     - "[Mm]atey"
     - ([AR]a*|Ya+)rrr+!
