@@ -32,6 +32,7 @@ export interface Document {
   labels: string[]
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasOwnProperty (o: any, key: string) {
   return Object.prototype.hasOwnProperty.call(o, key)
 }

@@ -28,6 +28,7 @@ async function getContent (gh: Github, path: string) {
     path,
     ref: github.context.sha
   })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = r.data as any
 
   return Buffer.from(data.content, data.encoding).toString()
@@ -64,6 +65,7 @@ function removeLabels (gh: Github, issueNumber: number, labels: string[]) {
 }
 
 async function getConfiguration (gh: Github, path: string): Promise<Configuration> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const configString = yaml.load(await getContent(gh, path)) as any
   return Object.entries(configString).reduce((a, [key, value]) => {
     if (Array.isArray(value)) {

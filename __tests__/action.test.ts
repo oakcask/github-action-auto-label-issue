@@ -7,7 +7,7 @@ const gh = github.getOctokit('_')
 const addLabels = jest.spyOn(gh.rest.issues, 'addLabels')
 const removeLabel = jest.spyOn(gh.rest.issues, 'removeLabel')
 const getContent = jest.spyOn(gh.rest.repos, 'getContent')
-jest.spyOn(gh, 'graphql').mockImplementationOnce(async (_query, _variables) => ({
+jest.spyOn(gh, 'graphql').mockImplementationOnce(async () => ({
   repository: {
     issue: {
       labels: {
@@ -38,6 +38,7 @@ const configuration = fs.readFileSync('__tests__/fixtures/example.yml')
 
 describe('main', () => {
   beforeEach(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     getContent.mockResolvedValue(<any>{
       data: { content: configuration, encoding: 'utf8' }
     })
