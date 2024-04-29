@@ -72,6 +72,7 @@ function getContent(gh, path) {
             path,
             ref: github.context.sha
         });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data = r.data;
         return Buffer.from(data.content, data.encoding).toString();
     });
@@ -108,6 +109,7 @@ function removeLabels(gh, issueNumber, labels) {
 }
 function getConfiguration(gh, path) {
     return __awaiter(this, void 0, void 0, function* () {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const configString = yaml.load(yield getContent(gh, path));
         return Object.entries(configString).reduce((a, [key, value]) => {
             if (Array.isArray(value)) {
@@ -183,6 +185,7 @@ exports.main = main;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.isMatch = void 0;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasOwnProperty(o, key) {
     return Object.prototype.hasOwnProperty.call(o, key);
 }
