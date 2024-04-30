@@ -18,8 +18,6 @@ export default [
     ...compat.config({
       extends: [
         'standard',
-        // 'plugin:import/recommended',
-        // 'plugin:n/recommended',
         'plugin:promise/recommended',
         'plugin:jest/recommended'
       ]
