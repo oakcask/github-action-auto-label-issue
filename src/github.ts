@@ -1,6 +1,6 @@
 import * as github from '@actions/github'
-import { RequestParameters } from '@octokit/graphql/dist-types/types'
-import { NextIssueLabelsQuery, NextIssueLabelsQueryVariables } from './generated/graphql'
+import type { RequestParameters } from '@octokit/graphql/dist-types/types'
+import type { NextIssueLabelsQuery, NextIssueLabelsQueryVariables } from './generated/graphql'
 
 export type Github = ReturnType<typeof github.getOctokit>
 

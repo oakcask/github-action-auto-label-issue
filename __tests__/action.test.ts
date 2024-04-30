@@ -1,6 +1,6 @@
 import * as github from '@actions/github'
 import * as core from '@actions/core'
-import fs from 'fs'
+import fs from 'node:fs'
 import { main } from '../src/action'
 
 const gh = github.getOctokit('_')
