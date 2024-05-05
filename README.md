@@ -15,10 +15,9 @@ and place it under `.github/workflows` directory.
 name: "Auto Labeling"
 on:
   issues:
-    types: [opened, edited]
 
 jobs:
-  mark:
+  auto-labeling:
     runs-on: ubuntu-latest
     steps:
       - uses: oakcask/github-action-auto-label-issue@v1
