@@ -245,6 +245,10 @@ function isMatch(d, e) {
     if (allExp) {
         return isMatchAllExpression(d, allExp);
     }
+    const notExp = cast(e, 'not');
+    if (notExp) {
+        return !isMatch(d, notExp.not);
+    }
     return false;
 }
 exports.isMatch = isMatch;
