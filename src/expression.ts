@@ -14,6 +14,10 @@ interface LabelPatternExpression {
   matchLabel: string
 }
 
+interface NotExpression<T> {
+  not: T
+}
+
 // provides compatiblity
 interface PatternExpression {
   pattern: string
@@ -24,6 +28,7 @@ export type Expression = AnyExpression<Expression> |
   LabelExpression |
   LabelPatternExpression |
   PatternExpression |
+  NotExpression<Expression> |
   string |
   Expression[] | { [key: string]: unknown };
 
@@ -97,6 +102,10 @@ export function isMatch (d: Document, e: Expression): boolean {
   const allExp = cast<AllExpression<Expression>>(e, 'all')
   if (allExp) {
     return isMatchAllExpression(d, allExp)
+  }
+  const notExp = cast<NotExpression<Expression>>(e, 'not')
+  if (notExp) {
+    return !isMatch(d, notExp.not)
   }
   return false
 }
