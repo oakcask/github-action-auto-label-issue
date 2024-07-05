@@ -50,7 +50,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.main = void 0;
+exports.main = main;
 const core = __importStar(__nccwpck_require__(9093));
 const github = __importStar(__nccwpck_require__(5942));
 const yaml = __importStar(__nccwpck_require__(6365));
@@ -173,7 +173,6 @@ function main() {
         }
     });
 }
-exports.main = main;
 
 
 /***/ }),
@@ -184,7 +183,7 @@ exports.main = main;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.isMatch = void 0;
+exports.isMatch = isMatch;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasOwnProperty(o, key) {
     return Object.prototype.hasOwnProperty.call(o, key);
@@ -251,7 +250,6 @@ function isMatch(d, e) {
     }
     return false;
 }
-exports.isMatch = isMatch;
 
 
 /***/ }),
@@ -271,7 +269,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.queryNextIssueLabels = void 0;
+exports.queryNextIssueLabels = queryNextIssueLabels;
 function query(gh, query, variables) {
     return gh.graphql(query, variables);
 }
@@ -299,7 +297,6 @@ function queryNextIssueLabels(gh, variables) {
         return yield query(gh, nextIssueLabelsQuery, variables);
     });
 }
-exports.queryNextIssueLabels = queryNextIssueLabels;
 
 
 /***/ }),
@@ -319,7 +316,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.enumerateIssueLabels = void 0;
+exports.enumerateIssueLabels = enumerateIssueLabels;
 const github_1 = __nccwpck_require__(1032);
 function enumerateIssueLabels(gh_1, _a) {
     return __awaiter(this, arguments, void 0, function* (gh, { repo, owner, issueNumber }) {
@@ -346,7 +343,6 @@ function enumerateIssueLabels(gh_1, _a) {
         return labels;
     });
 }
-exports.enumerateIssueLabels = enumerateIssueLabels;
 
 
 /***/ }),
