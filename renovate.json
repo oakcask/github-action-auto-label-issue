@@ -3,7 +3,12 @@
   "extends": [
     "config:recommended"
   ],
+  "prConcurrentLimit": 1,
   "packageRules": [
+    {
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true
+    },
     {
       "matchPackagePatterns": ["^@?eslint"],
       "groupName": "eslint packages"
