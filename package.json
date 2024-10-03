@@ -22,7 +22,7 @@
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-codegen/typescript-operations": "^4.2.0",
     "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/github": "^10.0.3",
+    "@semantic-release/github": "^11.0.0",
     "@types/jest": "^29.5.12",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.12.7",
