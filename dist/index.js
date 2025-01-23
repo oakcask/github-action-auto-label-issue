@@ -39,26 +39,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.main = main;
 const core = __importStar(__nccwpck_require__(9999));
@@ -71,41 +51,36 @@ function getIssueNumber() {
         return github.context.payload.issue.number;
 }
 function getIssueBody() {
-    var _a;
-    return (_a = github.context.payload.issue) === null || _a === void 0 ? void 0 : _a.body;
+    return github.context.payload.issue?.body;
 }
-function getContent(gh, path) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const r = yield gh.rest.repos.getContent({
+async function getContent(gh, path) {
+    const r = await gh.rest.repos.getContent({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        path,
+        ref: github.context.sha
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data = r.data;
+    return Buffer.from(data.content, data.encoding).toString();
+}
+async function addLabels(gh, issueNumber, labels) {
+    try {
+        await gh.rest.issues.addLabels({
             owner: github.context.repo.owner,
             repo: github.context.repo.repo,
-            path,
-            ref: github.context.sha
+            issue_number: issueNumber,
+            labels
         });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const data = r.data;
-        return Buffer.from(data.content, data.encoding).toString();
-    });
-}
-function addLabels(gh, issueNumber, labels) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield gh.rest.issues.addLabels({
-                owner: github.context.repo.owner,
-                repo: github.context.repo.repo,
-                issue_number: issueNumber,
-                labels
-            });
-        }
-        catch (e) {
-            console.warn(e);
-        }
-    });
+    }
+    catch (e) {
+        console.warn(e);
+    }
 }
 function removeLabels(gh, issueNumber, labels) {
-    return Promise.all(labels.map((label) => __awaiter(this, void 0, void 0, function* () {
+    return Promise.all(labels.map(async (label) => {
         try {
-            yield gh.rest.issues.removeLabel({
+            await gh.rest.issues.removeLabel({
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
                 issue_number: issueNumber,
@@ -115,73 +90,67 @@ function removeLabels(gh, issueNumber, labels) {
         catch (e) {
             console.warn(e);
         }
-    })));
+    }));
 }
-function getConfiguration(gh, path) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const configString = yaml.load(yield getContent(gh, path));
-        return Object.entries(configString).reduce((a, [key, value]) => {
-            if (Array.isArray(value)) {
-                a[key] = {
-                    expression: value,
-                    removeOnMissing: false
-                };
-            }
-            else {
-                const item = value;
-                const { removeOnMissing } = item, expression = __rest(item, ["removeOnMissing"]);
-                a[key] = {
-                    expression,
-                    removeOnMissing: typeof removeOnMissing === 'boolean' && removeOnMissing
-                };
-            }
-            return a;
-        }, {});
+async function getConfiguration(gh, path) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const configString = yaml.load(await getContent(gh, path));
+    return Object.entries(configString).reduce((a, [key, value]) => {
+        if (Array.isArray(value)) {
+            a[key] = {
+                expression: value,
+                removeOnMissing: false
+            };
+        }
+        else {
+            const item = value;
+            const { removeOnMissing, ...expression } = item;
+            a[key] = {
+                expression,
+                removeOnMissing: typeof removeOnMissing === 'boolean' && removeOnMissing
+            };
+        }
+        return a;
+    }, {});
+}
+async function getIssueLabels(gh, issueNumber) {
+    return await (0, issue_1.enumerateIssueLabels)(gh, {
+        repo: github.context.repo.repo,
+        owner: github.context.repo.owner,
+        issueNumber
     });
 }
-function getIssueLabels(gh, issueNumber) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return yield (0, issue_1.enumerateIssueLabels)(gh, {
-            repo: github.context.repo.repo,
-            owner: github.context.repo.owner,
-            issueNumber
-        });
-    });
-}
-function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const token = core.getInput('repo-token', { required: true });
-        const configPath = core.getInput('configuration-path', { required: true });
-        const issueNumber = getIssueNumber();
-        const issueBody = getIssueBody();
-        if (issueNumber === undefined || issueBody === undefined) {
-            console.log('cannot read issue. skipping...');
-            return;
+async function main() {
+    const token = core.getInput('repo-token', { required: true });
+    const configPath = core.getInput('configuration-path', { required: true });
+    const issueNumber = getIssueNumber();
+    const issueBody = getIssueBody();
+    if (issueNumber === undefined || issueBody === undefined) {
+        console.log('cannot read issue. skipping...');
+        return;
+    }
+    const gh = github.getOctokit(token);
+    const labelsAdding = [];
+    const labelsRemoving = [];
+    const issueLabels = await getIssueLabels(gh, issueNumber);
+    const config = await getConfiguration(gh, configPath);
+    for (const label in config) {
+        const labelConfig = config[label];
+        if ((0, expression_1.isMatch)({ body: issueBody, labels: issueLabels }, labelConfig.expression)) {
+            labelsAdding.push(label);
         }
-        const gh = github.getOctokit(token);
-        const labelsAdding = [];
-        const labelsRemoving = [];
-        const issueLabels = yield getIssueLabels(gh, issueNumber);
-        const config = yield getConfiguration(gh, configPath);
-        for (const label in config) {
-            const labelConfig = config[label];
-            if ((0, expression_1.isMatch)({ body: issueBody, labels: issueLabels }, labelConfig.expression)) {
-                labelsAdding.push(label);
-            }
-            else {
-                if (labelConfig.removeOnMissing) {
-                    labelsRemoving.push(label);
-                }
+        else {
+            if (labelConfig.removeOnMissing) {
+                labelsRemoving.push(label);
             }
         }
-        if (labelsAdding.length > 0) {
-            yield addLabels(gh, issueNumber, labelsAdding);
-        }
-        if (labelsRemoving.length > 0) {
-            yield removeLabels(gh, issueNumber, labelsRemoving);
-        }
-    });
+    }
+    if (labelsAdding.length > 0) {
+        await addLabels(gh, issueNumber, labelsAdding);
+    }
+    if (labelsRemoving.length > 0) {
+        await removeLabels(gh, issueNumber, labelsRemoving);
+    }
 }
 
 
@@ -265,19 +234,10 @@ function isMatch(d, e) {
 /***/ }),
 
 /***/ 1767:
-/***/ (function(__unused_webpack_module, exports) {
+/***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.queryNextIssueLabels = queryNextIssueLabels;
 function query(gh, query, variables) {
@@ -302,56 +262,42 @@ const nextIssueLabelsQuery = /* GraphQL */ `
     }
   }
 `;
-function queryNextIssueLabels(gh, variables) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return yield query(gh, nextIssueLabelsQuery, variables);
-    });
+async function queryNextIssueLabels(gh, variables) {
+    return await query(gh, nextIssueLabelsQuery, variables);
 }
 
 
 /***/ }),
 
 /***/ 3501:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.enumerateIssueLabels = enumerateIssueLabels;
 const github_1 = __nccwpck_require__(1767);
-function enumerateIssueLabels(gh_1, _a) {
-    return __awaiter(this, arguments, void 0, function* (gh, { repo, owner, issueNumber }) {
-        var _b, _c, _d;
-        const labels = [];
-        let lastEndCursor;
-        let done = false;
-        while (!done) {
-            const res = yield (0, github_1.queryNextIssueLabels)(gh, {
-                repo, owner, issueNumber, pageSize: 100, lastEndCursor
-            });
-            if (!((_d = (_c = (_b = res.repository) === null || _b === void 0 ? void 0 : _b.issue) === null || _c === void 0 ? void 0 : _c.labels) === null || _d === void 0 ? void 0 : _d.nodes)) {
-                throw Error('failed to query issue labels');
-            }
-            const { endCursor, hasNextPage } = res.repository.issue.labels.pageInfo;
-            for (const node of res.repository.issue.labels.nodes) {
-                if (node === null || node === void 0 ? void 0 : node.name) {
-                    labels.push(node.name);
-                }
-            }
-            lastEndCursor = endCursor !== null && endCursor !== void 0 ? endCursor : undefined;
-            done = !hasNextPage;
+async function enumerateIssueLabels(gh, { repo, owner, issueNumber }) {
+    const labels = [];
+    let lastEndCursor;
+    let done = false;
+    while (!done) {
+        const res = await (0, github_1.queryNextIssueLabels)(gh, {
+            repo, owner, issueNumber, pageSize: 100, lastEndCursor
+        });
+        if (!res.repository?.issue?.labels?.nodes) {
+            throw Error('failed to query issue labels');
         }
-        return labels;
-    });
+        const { endCursor, hasNextPage } = res.repository.issue.labels.pageInfo;
+        for (const node of res.repository.issue.labels.nodes) {
+            if (node?.name) {
+                labels.push(node.name);
+            }
+        }
+        lastEndCursor = endCursor ?? undefined;
+        done = !hasNextPage;
+    }
+    return labels;
 }
 
 
