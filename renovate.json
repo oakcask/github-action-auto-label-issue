@@ -6,12 +6,17 @@
   "prConcurrentLimit": 1,
   "packageRules": [
     {
-      "matchUpdateTypes": ["patch", "minor"],
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
       "automerge": true
     },
     {
-      "matchPackagePatterns": ["^@?eslint"],
-      "groupName": "eslint packages"
+      "groupName": "eslint packages",
+      "matchPackageNames": [
+        "/^@?eslint/"
+      ]
     }
   ],
   "rangeStrategy": "update-lockfile"
