@@ -1,8 +1,7 @@
 {
   "name": "github-action-auto-label-issue",
   "scripts": {
-    "compile": "tsc",
-    "build": "tsc && ncc build lib/main.js",
+    "build": "ncc build -m src/main.ts",
     "test": "jest",
     "format:all": "eslint --fix .",
     "release": "semantic-release",
