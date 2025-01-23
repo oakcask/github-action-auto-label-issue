@@ -1,6 +1,5 @@
 {
   "name": "github-action-auto-label-issue",
-  "main": "lib/main.js",
   "scripts": {
     "compile": "tsc",
     "build": "tsc && ncc build lib/main.js",
@@ -21,12 +20,12 @@
     "@graphql-codegen/introspection": "^4.0.3",
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-codegen/typescript-operations": "^4.2.0",
+    "@octokit/types": "^13.7.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/github": "^11.0.0",
     "@types/jest": "^29.5.12",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.12.7",
-    "typescript-eslint": "^8.0.0",
     "@vercel/ncc": "^0.38.1",
     "eslint": "^9.0.0",
     "eslint-config-standard": "^17.1.0",
@@ -38,7 +37,8 @@
     "semantic-release": "^24.0.0",
     "semantic-release-tags": "^2.0.0",
     "ts-jest": "^29.1.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^8.0.0"
   },
   "dependencies": {
     "@actions/core": "^1.10.1",
