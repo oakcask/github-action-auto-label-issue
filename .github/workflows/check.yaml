@@ -27,6 +27,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN  }}
       - uses:  ./.github/actions/setup-pnpm
-      - uses: "."
-        with:
-          configuration-path: examples/config.yaml
+      - run: pnpm build:debug
+      - run: node ./dist
+        env:
+          INPUT_CONFIGURATION-PATH: examples/config.yaml
+          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}

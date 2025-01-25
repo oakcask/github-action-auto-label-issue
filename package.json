@@ -2,6 +2,7 @@
   "name": "github-action-auto-label-issue",
   "scripts": {
     "build": "ncc build -m src/main.ts",
+    "build:debug": "ncc build -s src/main.ts",
     "test": "vitest --run",
     "format:all": "eslint --fix .",
     "release": "semantic-release",
