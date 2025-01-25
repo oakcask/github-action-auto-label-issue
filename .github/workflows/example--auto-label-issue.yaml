@@ -1,8 +1,9 @@
-name: "Auto Labeling"
+name: example / auto label issue
 on:
   issues:
     types: [opened, edited]
-permissions: write-all
+permissions: 
+  issues: write
 jobs:
   mark:
     runs-on: ubuntu-latest
@@ -10,4 +11,4 @@ jobs:
       - uses: oakcask/github-action-auto-label-issue@v2
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
-          configuration-path: .github/auto-label.yaml
+          configuration-path: examples/config.yaml
