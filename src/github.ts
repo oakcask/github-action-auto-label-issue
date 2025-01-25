@@ -1,14 +1,12 @@
-import * as github from '@actions/github'
+import type { Octokit } from '@octokit/action'
 import type { RequestParameters } from '@octokit/types'
-import type { NextIssueLabelsQuery, NextIssueLabelsQueryVariables } from './generated/graphql'
-
-export type Github = ReturnType<typeof github.getOctokit>
+import type { NextIssueLabelsQuery, NextIssueLabelsQueryVariables } from './generated/graphql.js'
 
 type Query = {
   __typename?: 'Query'
 }
 
-function query<TQuery extends Query> (gh: Github, query: string, variables: RequestParameters): Promise<TQuery> {
+function query<TQuery extends Query> (gh: Octokit, query: string, variables: RequestParameters): Promise<TQuery> {
   return gh.graphql<TQuery>(query, variables)
 }
 
@@ -32,6 +30,6 @@ const nextIssueLabelsQuery = /* GraphQL */ `
   }
 `
 
-export async function queryNextIssueLabels (gh: Github, variables: NextIssueLabelsQueryVariables): Promise<NextIssueLabelsQuery> {
+export async function queryNextIssueLabels (gh: Octokit, variables: NextIssueLabelsQueryVariables): Promise<NextIssueLabelsQuery> {
   return await query<NextIssueLabelsQuery>(gh, nextIssueLabelsQuery, variables)
 }

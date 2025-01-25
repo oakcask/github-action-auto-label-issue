@@ -2,9 +2,11 @@ name: github-action-auto-label-issue
 description: Automatically add/remove labels on github issues
 author: oakcask
 inputs:
-  repo-token:
-    description: GITHUB_TOKEN
-    required: true
+  token:
+    required: false
+    description: |-
+      The repository's secret to authorize API invocations.
+      If ommited, GITHUB_TOKEN environment variable is used instead.
   configuration-path:
     description: The path for label configurations
     required: true

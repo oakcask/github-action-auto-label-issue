@@ -1,6 +1,7 @@
-import { Github, queryNextIssueLabels } from './github'
+import type { Octokit } from '@octokit/action'
+import { queryNextIssueLabels } from './github.js'
 
-export async function enumerateIssueLabels (gh: Github, { repo, owner, issueNumber }: { repo: string, owner: string, issueNumber: number }): Promise<string[]> {
+export async function enumerateIssueLabels (gh: Octokit, { repo, owner, issueNumber }: { repo: string, owner: string, issueNumber: number }): Promise<string[]> {
   const labels: string[] = []
   let lastEndCursor: string | undefined
   let done = false
