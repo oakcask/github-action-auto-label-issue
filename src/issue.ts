@@ -1,28 +1,98 @@
 import type { Octokit } from '@octokit/action'
-import { queryNextIssueLabels } from './github.js'
+import { enumerateIssueLabels } from './github.js'
 
-export async function enumerateIssueLabels (gh: Octokit, { repo, owner, issueNumber }: { repo: string, owner: string, issueNumber: number }): Promise<string[]> {
-  const labels: string[] = []
-  let lastEndCursor: string | undefined
-  let done = false
+export interface Context {
+  repo: {
+    owner: string,
+    repo: string
+  }
+  ref: string
+  issue: {
+    number: number,
+    body: string
+  }
+}
 
-  while (!done) {
-    const res = await queryNextIssueLabels(gh, {
-      repo, owner, issueNumber, pageSize: 100, lastEndCursor
-    })
-    if (!res.repository?.issue?.labels?.nodes) {
-      throw Error('failed to query issue labels')
-    }
-    const { endCursor, hasNextPage } = res.repository.issue.labels.pageInfo
-    for (const node of res.repository.issue.labels.nodes) {
-      if (node?.name) {
-        labels.push(node.name)
-      }
-    }
+export class Issue {
+  readonly _octokit: Octokit
+  readonly _ctx: Context
+  readonly _labels: string[]
+  _labelsToAdd: string[] = []
+  _labelsToRemove: string[] = []
 
-    lastEndCursor = endCursor ?? undefined
-    done = !hasNextPage
+  constructor (octokit: Octokit, ctx: Context, labels: string[]) {
+    this._octokit = octokit
+    this._ctx = ctx
+    this._labels = labels
   }
 
-  return labels
+  body () {
+    return this._ctx.issue.body
+  }
+
+  labels () {
+    return this._labels
+  }
+
+  addLabel (label: string) {
+    this._labelsToAdd.push(label)
+  }
+
+  removeLabel (label: string) {
+    this._labelsToRemove.push(label)
+  }
+
+  async commitChanges () {
+    if (this._labelsToAdd.length > 0) {
+      await addLabels(this._octokit, this._ctx, this._labelsToAdd)
+    }
+    if (this._labelsToRemove.length > 0) {
+      await removeLabels(this._octokit, this._ctx, this._labelsToRemove)
+    }
+  }
+}
+
+export async function getIssue (gh: Octokit, ctx: Context): Promise<Issue> {
+  const issueLabels: string[] = await getIssueLabels(gh, ctx)
+  return new Issue(gh, ctx, issueLabels)
+}
+
+async function addLabels (gh: Octokit, ctx: Context, labels: string[]) {
+  try {
+    await gh.rest.issues.addLabels({
+      owner: ctx.repo.owner,
+      repo: ctx.repo.repo,
+      issue_number: ctx.issue.number,
+      labels
+    })
+  } catch (e) {
+    console.warn(e)
+  }
+}
+
+function removeLabels (gh: Octokit, ctx: Context, labels: string[]) {
+  return Promise.all(
+    labels.map(async (label) => {
+      try {
+        await gh.rest.issues.removeLabel({
+          owner: ctx.repo.owner,
+          repo: ctx.repo.repo,
+          issue_number: ctx.issue.number,
+          name: label
+        })
+      } catch (e) {
+        console.warn(e)
+      }
+    })
+  )
+}
+
+async function getIssueLabels (
+  gh: Octokit,
+  { issue: { number: issueNumber }, repo: { owner, repo } }: { issue: { number: number }, repo: { owner: string, repo: string }}) {
+  return await enumerateIssueLabels(gh, {
+    repo,
+    owner,
+    issueNumber
+  })
 }

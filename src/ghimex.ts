@@ -1,3 +1,5 @@
+// ghimex stands for GitHub Issue Match Expression
+
 interface AnyExpression<T> {
   any: T[]
 }
@@ -32,9 +34,9 @@ export type Expression = AnyExpression<Expression> |
   string |
   Expression[] | { [key: string]: unknown };
 
-export interface Document {
-  body: string,
-  labels: string[]
+export interface IssueLike {
+  body(): string,
+  labels(): string[]
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,7 +50,7 @@ function cast<TExpression> (e: Expression, key: keyof TExpression): TExpression 
   }
 }
 
-function isMatchAllExpression (d: Document, exps: Expression[] | AllExpression<Expression>): boolean {
+function isMatchAllExpression (d: IssueLike, exps: Expression[] | AllExpression<Expression>): boolean {
   if (Array.isArray(exps)) {
     for (const e of exps) {
       if (!isMatch(d, e)) {
@@ -67,7 +69,7 @@ function isMatchAllExpression (d: Document, exps: Expression[] | AllExpression<E
   return true
 }
 
-function isMatchAnyExpression (d: Document, exp: AnyExpression<Expression>): boolean {
+function isMatchAnyExpression (d: IssueLike, exp: AnyExpression<Expression>): boolean {
   for (const e of exp.any) {
     if (isMatch(d, e)) {
       return true
@@ -76,24 +78,24 @@ function isMatchAnyExpression (d: Document, exp: AnyExpression<Expression>): boo
   return false
 }
 
-export function isMatch (d: Document, e: Expression): boolean {
+export function isMatch (d: IssueLike, e: Expression): boolean {
   if (typeof e === 'string') {
-    return new RegExp(e).test(d.body)
+    return new RegExp(e).test(d.body())
   }
   if (Array.isArray(e)) {
     return isMatchAllExpression(d, e)
   }
   const patternExp = cast<PatternExpression>(e, 'pattern')
   if (patternExp) {
-    return new RegExp(patternExp.pattern).test(d.body)
+    return new RegExp(patternExp.pattern).test(d.body())
   }
   const labelExp = cast<LabelExpression>(e, 'label')
   if (labelExp) {
-    return d.labels.find(o => o === labelExp.label) !== undefined
+    return d.labels().find(o => o === labelExp.label) !== undefined
   }
   const labelPatExp = cast<LabelPatternExpression>(e, 'matchLabel')
   if (labelPatExp) {
-    return d.labels.find(o => new RegExp(labelPatExp.matchLabel).test(o)) !== undefined
+    return d.labels().find(o => new RegExp(labelPatExp.matchLabel).test(o)) !== undefined
   }
   const anyExp = cast<AnyExpression<Expression>>(e, 'any')
   if (anyExp) {
