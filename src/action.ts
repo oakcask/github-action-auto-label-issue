@@ -1,28 +1,16 @@
 import fs from 'node:fs'
 import * as core from '@actions/core'
 import * as yaml from 'js-yaml'
-import { Expression, isMatch } from './expression.js'
-import { enumerateIssueLabels } from './issue.js'
+import { Expression, isMatch } from './ghimex.js'
 import { Octokit } from '@octokit/action'
 import { WebhookEvent } from '@octokit/webhooks-types'
+import { Context, getIssue } from './issue.js'
 
 interface Configuration {
   [label: string]: {
     expression: Expression
     removeOnMissing: boolean;
   };
-}
-
-interface Context {
-  repo: {
-    owner: string,
-    repo: string
-  }
-  ref: string
-  issue: {
-    number: number,
-    body: string
-  }
 }
 
 export function parseContext (): Context | undefined {
@@ -58,36 +46,6 @@ function parseIssue (payload: WebhookEvent): { number: number, body: string } | 
   return undefined
 }
 
-async function addLabels (gh: Octokit, ctx: Context, labels: string[]) {
-  try {
-    await gh.rest.issues.addLabels({
-      owner: ctx.repo.owner,
-      repo: ctx.repo.repo,
-      issue_number: ctx.issue.number,
-      labels
-    })
-  } catch (e) {
-    console.warn(e)
-  }
-}
-
-function removeLabels (gh: Octokit, ctx: Context, labels: string[]) {
-  return Promise.all(
-    labels.map(async (label) => {
-      try {
-        await gh.rest.issues.removeLabel({
-          owner: ctx.repo.owner,
-          repo: ctx.repo.repo,
-          issue_number: ctx.issue.number,
-          name: label
-        })
-      } catch (e) {
-        console.warn(e)
-      }
-    })
-  )
-}
-
 function getConfiguration (path: string): Configuration {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const configString = yaml.load(fs.readFileSync(path, 'utf-8')) as any
@@ -110,16 +68,6 @@ function getConfiguration (path: string): Configuration {
   }, {} as Configuration)
 }
 
-async function getIssueLabels (
-  gh: Octokit,
-  { issue: { number: issueNumber }, repo: { owner, repo } }: { issue: { number: number }, repo: { owner: string, repo: string }}) {
-  return await enumerateIssueLabels(gh, {
-    repo,
-    owner,
-    issueNumber
-  })
-}
-
 export async function main () {
   const configPath = core.getInput('configuration-path', { required: true })
   const octokit = new Octokit()
@@ -130,26 +78,18 @@ export async function main () {
     return
   }
 
-  const labelsAdding: string[] = []
-  const labelsRemoving: string[] = []
-  const issueLabels: string[] = await getIssueLabels(octokit, ctx)
-
   const config = getConfiguration(configPath)
+  const issue = await getIssue(octokit, ctx)
   for (const label in config) {
     const labelConfig = config[label]
-    if (isMatch({ body: ctx.issue.body, labels: issueLabels }, labelConfig.expression)) {
-      labelsAdding.push(label)
+    if (isMatch(issue, labelConfig.expression)) {
+      issue.addLabel(label)
     } else {
       if (labelConfig.removeOnMissing) {
-        labelsRemoving.push(label)
+        issue.removeLabel(label)
       }
     }
   }
 
-  if (labelsAdding.length > 0) {
-    await addLabels(octokit, ctx, labelsAdding)
-  }
-  if (labelsRemoving.length > 0) {
-    await removeLabels(octokit, ctx, labelsRemoving)
-  }
+  await issue.commitChanges()
 }

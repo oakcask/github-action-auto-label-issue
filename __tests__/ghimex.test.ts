@@ -1,5 +1,23 @@
 import { describe, it, expect } from 'vitest'
-import { isMatch, Expression } from '../src/expression'
+import { isMatch, Expression } from '../src/ghimex'
+
+class TestIssue {
+  readonly _body: string
+  readonly _labels: string[]
+
+  constructor (given: { body: string, labels?: string[]}) {
+    this._body = given.body
+    this._labels = given.labels || []
+  }
+
+  body () {
+    return this._body
+  }
+
+  labels () {
+    return this._labels
+  }
+}
 
 describe('isMatch', () => {
   const testCases: Array<[{ body: string, labels?: string[] }, Expression, boolean]> = [
@@ -36,6 +54,6 @@ describe('isMatch', () => {
   ]
 
   it.each(testCases)('for given document %j and expression %j, returns %p', async (doc, exp, outcome) => {
-    expect(isMatch({ body: doc.body, labels: doc.labels || [] }, exp)).toBe(outcome)
+    expect(isMatch(new TestIssue(doc), exp)).toBe(outcome)
   })
 })
