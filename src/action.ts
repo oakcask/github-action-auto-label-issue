@@ -15,12 +15,19 @@ interface Configuration {
 
 export function parseContext (): Context | undefined {
   const payload = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH!, 'utf8')) as WebhookEvent
+  const repo = parseRepo(payload)
   const issue = parseIssue(payload)
   if (issue) {
     return {
-      repo: parseRepo(payload),
-      ref: process.env.GITHUB_REF!,
+      ...repo,
       issue
+    }
+  }
+  const pullRequest = parsePullRequest(payload)
+  if (pullRequest) {
+    return {
+      ...repo,
+      pullRequest
     }
   }
 
@@ -39,11 +46,25 @@ function parseRepo (payload: WebhookEvent): { owner: string, repo: string } {
   throw new Error('cannot recognize the repository')
 }
 
-function parseIssue (payload: WebhookEvent): { number: number, body: string } | undefined {
+function parseIssue (payload: WebhookEvent): { id: string, number: number, body: string } | undefined {
   if ('issue' in payload && payload.issue) {
-    return { number: payload.issue.number, body: payload.issue.body || '' }
+    return {
+      id: payload.issue.node_id,
+      number: payload.issue.number,
+      body: payload.issue.body || ''
+    }
   }
   return undefined
+}
+
+function parsePullRequest (payload: WebhookEvent): { id: string, number: number, body: string } | undefined {
+  if ('pull_request' in payload && payload.pull_request) {
+    return {
+      id: payload.pull_request.node_id,
+      number: payload.pull_request.number,
+      body: payload.pull_request.body || ''
+    }
+  }
 }
 
 function getConfiguration (path: string): Configuration {
@@ -74,7 +95,7 @@ export async function main () {
   const ctx = parseContext()
 
   if (!ctx) {
-    console.log('cannot read issue. skipping...')
+    core.info('cannot find a issue or pull request to update.')
     return
   }
 

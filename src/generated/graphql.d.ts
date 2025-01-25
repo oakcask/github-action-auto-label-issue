@@ -32149,10 +32149,40 @@ export type WorkflowsParametersInput = {
 export type NextIssueLabelsQueryVariables = Exact<{
   repo: Scalars['String']['input'];
   owner: Scalars['String']['input'];
-  issueNumber: Scalars['Int']['input'];
+  number: Scalars['Int']['input'];
   pageSize: Scalars['Int']['input'];
   lastEndCursor?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type NextIssueLabelsQuery = { __typename?: 'Query', repository?: { __typename?: 'Repository', issue?: { __typename?: 'Issue', labels?: { __typename?: 'LabelConnection', pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean }, nodes?: Array<{ __typename?: 'Label', id: string, name: string, resourcePath: any } | null> | null } | null } | null } | null };
+export type NextIssueLabelsQuery = { __typename?: 'Query', repository?: { __typename?: 'Repository', issue?: { __typename?: 'Issue', labels?: { __typename?: 'LabelConnection', pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean }, nodes?: Array<{ __typename?: 'Label', name: string } | null> | null } | null } | null } | null };
+
+export type NextPullRequestLabelsQueryVariables = Exact<{
+  repo: Scalars['String']['input'];
+  owner: Scalars['String']['input'];
+  number: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+  lastEndCursor?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type NextPullRequestLabelsQuery = { __typename?: 'Query', repository?: { __typename?: 'Repository', pullRequest?: { __typename?: 'PullRequest', labels?: { __typename?: 'LabelConnection', pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean }, nodes?: Array<{ __typename?: 'Label', name: string } | null> | null } | null } | null } | null };
+
+export type NextRepositoryLabelsQueryVariables = Exact<{
+  repo: Scalars['String']['input'];
+  owner: Scalars['String']['input'];
+  pageSize: Scalars['Int']['input'];
+  lastEndCursor?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type NextRepositoryLabelsQuery = { __typename?: 'Query', repository?: { __typename?: 'Repository', labels?: { __typename?: 'LabelConnection', pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean }, nodes?: Array<{ __typename?: 'Label', id: string, name: string } | null> | null } | null } | null };
+
+export type UpdateLabelsMutationVariables = Exact<{
+  labelableId: Scalars['ID']['input'];
+  labelsToAdd: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+  labelsToRemove: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+}>;
+
+
+export type UpdateLabelsMutation = { __typename?: 'Mutation', addLabelsToLabelable?: { __typename: 'AddLabelsToLabelablePayload' } | null, removeLabelsFromLabelable?: { __typename: 'RemoveLabelsFromLabelablePayload' } | null };
