@@ -18,3 +18,15 @@ jobs:
           commit-message: "style: `$ npm run format:all`"
           token: ${{ secrets.GITHUB_TOKEN  }}
       - run: pnpm run test
+  integration:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN  }}
+      - uses:  ./.github/actions/setup-pnpm
+      - uses: "."
+        with:
+          configuration-path: examples/config.yaml
