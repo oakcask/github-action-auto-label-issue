@@ -1,10 +1,10 @@
+import fs from 'node:fs'
 import * as core from '@actions/core'
-import * as github from '@actions/github'
 import * as yaml from 'js-yaml'
-import { Expression, isMatch } from './expression'
-import { enumerateIssueLabels } from './issue'
-
-type Github = ReturnType<typeof github.getOctokit>;
+import { Expression, isMatch } from './expression.js'
+import { enumerateIssueLabels } from './issue.js'
+import { Octokit } from '@octokit/action'
+import { WebhookEvent } from '@octokit/webhooks-types'
 
 interface Configuration {
   [label: string]: {
@@ -13,20 +13,57 @@ interface Configuration {
   };
 }
 
-function getIssueNumber (): number | undefined {
-  if (github.context.payload.issue) return github.context.payload.issue.number
+interface Context {
+  repo: {
+    owner: string,
+    repo: string
+  }
+  ref: string
+  issue: {
+    number: number,
+    body: string
+  }
 }
 
-function getIssueBody (): string | undefined {
-  return github.context.payload.issue?.body
+export function parseContext (): Context | undefined {
+  const payload = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH!, 'utf8')) as WebhookEvent
+  const issue = parseIssue(payload)
+  if (issue) {
+    return {
+      repo: parseRepo(payload),
+      ref: process.env.GITHUB_REF!,
+      issue
+    }
+  }
+
+  return undefined
 }
 
-async function getContent (gh: Github, path: string) {
+function parseRepo (payload: WebhookEvent): { owner: string, repo: string } {
+  if (process.env.GITHUB_REPOSITORY) {
+    const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
+    return { owner, repo }
+  }
+  if ('repository' in payload && payload.repository) {
+    return { owner: payload.repository.owner.login, repo: payload.repository.name }
+  }
+
+  throw new Error('cannot recognize the repository')
+}
+
+function parseIssue (payload: WebhookEvent): { number: number, body: string } | undefined {
+  if ('issue' in payload && payload.issue) {
+    return { number: payload.issue.number, body: payload.issue.body || '' }
+  }
+  return undefined
+}
+
+async function getContent (gh: Octokit, ctx: Context, path: string) {
   const r = await gh.rest.repos.getContent({
-    owner: github.context.repo.owner,
-    repo: github.context.repo.repo,
+    owner: ctx.repo.owner,
+    repo: ctx.repo.repo,
     path,
-    ref: github.context.sha
+    ref: ctx.ref
   })
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = r.data as any
@@ -34,12 +71,12 @@ async function getContent (gh: Github, path: string) {
   return Buffer.from(data.content, data.encoding).toString()
 }
 
-async function addLabels (gh: Github, issueNumber: number, labels: string[]) {
+async function addLabels (gh: Octokit, ctx: Context, labels: string[]) {
   try {
     await gh.rest.issues.addLabels({
-      owner: github.context.repo.owner,
-      repo: github.context.repo.repo,
-      issue_number: issueNumber,
+      owner: ctx.repo.owner,
+      repo: ctx.repo.repo,
+      issue_number: ctx.issue.number,
       labels
     })
   } catch (e) {
@@ -47,14 +84,14 @@ async function addLabels (gh: Github, issueNumber: number, labels: string[]) {
   }
 }
 
-function removeLabels (gh: Github, issueNumber: number, labels: string[]) {
+function removeLabels (gh: Octokit, ctx: Context, labels: string[]) {
   return Promise.all(
     labels.map(async (label) => {
       try {
         await gh.rest.issues.removeLabel({
-          owner: github.context.repo.owner,
-          repo: github.context.repo.repo,
-          issue_number: issueNumber,
+          owner: ctx.repo.owner,
+          repo: ctx.repo.repo,
+          issue_number: ctx.issue.number,
           name: label
         })
       } catch (e) {
@@ -64,9 +101,9 @@ function removeLabels (gh: Github, issueNumber: number, labels: string[]) {
   )
 }
 
-async function getConfiguration (gh: Github, path: string): Promise<Configuration> {
+async function getConfiguration (gh: Octokit, ctx: Context, path: string): Promise<Configuration> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const configString = yaml.load(await getContent(gh, path)) as any
+  const configString = yaml.load(await getContent(gh, ctx, path)) as any
   return Object.entries(configString).reduce((a, [key, value]) => {
     if (Array.isArray(value)) {
       a[key] = {
@@ -86,35 +123,34 @@ async function getConfiguration (gh: Github, path: string): Promise<Configuratio
   }, {} as Configuration)
 }
 
-async function getIssueLabels (gh: Github, issueNumber: number) {
+async function getIssueLabels (
+  gh: Octokit,
+  { issue: { number: issueNumber }, repo: { owner, repo } }: { issue: { number: number }, repo: { owner: string, repo: string }}) {
   return await enumerateIssueLabels(gh, {
-    repo: github.context.repo.repo,
-    owner: github.context.repo.owner,
+    repo,
+    owner,
     issueNumber
   })
 }
 
 export async function main () {
-  const token = core.getInput('repo-token', { required: true })
   const configPath = core.getInput('configuration-path', { required: true })
+  const octokit = new Octokit()
+  const ctx = parseContext()
 
-  const issueNumber = getIssueNumber()
-  const issueBody = getIssueBody()
-
-  if (issueNumber === undefined || issueBody === undefined) {
+  if (!ctx) {
     console.log('cannot read issue. skipping...')
     return
   }
 
-  const gh = github.getOctokit(token)
   const labelsAdding: string[] = []
   const labelsRemoving: string[] = []
-  const issueLabels: string[] = await getIssueLabels(gh, issueNumber)
+  const issueLabels: string[] = await getIssueLabels(octokit, ctx)
 
-  const config = await getConfiguration(gh, configPath)
+  const config = await getConfiguration(octokit, ctx, configPath)
   for (const label in config) {
     const labelConfig = config[label]
-    if (isMatch({ body: issueBody, labels: issueLabels }, labelConfig.expression)) {
+    if (isMatch({ body: ctx.issue.body, labels: issueLabels }, labelConfig.expression)) {
       labelsAdding.push(label)
     } else {
       if (labelConfig.removeOnMissing) {
@@ -124,9 +160,9 @@ export async function main () {
   }
 
   if (labelsAdding.length > 0) {
-    await addLabels(gh, issueNumber, labelsAdding)
+    await addLabels(octokit, ctx, labelsAdding)
   }
   if (labelsRemoving.length > 0) {
-    await removeLabels(gh, issueNumber, labelsRemoving)
+    await removeLabels(octokit, ctx, labelsRemoving)
   }
 }

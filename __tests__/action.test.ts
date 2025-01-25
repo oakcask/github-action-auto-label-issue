@@ -1,69 +1,45 @@
-import * as github from '@actions/github'
-import * as core from '@actions/core'
-import fs from 'node:fs'
-import { main } from '../src/action'
+import { describe, expect, it, beforeEach } from 'vitest'
+import { parseContext } from '../src/action'
 
-const gh = github.getOctokit('_')
-const addLabels = jest.spyOn(gh.rest.issues, 'addLabels')
-const removeLabel = jest.spyOn(gh.rest.issues, 'removeLabel')
-const getContent = jest.spyOn(gh.rest.repos, 'getContent')
-jest.spyOn(gh, 'graphql').mockImplementationOnce(async () => ({
-  repository: {
-    issue: {
-      labels: {
-        pageInfo: {
-          endCursor: null,
-          hasNextPage: false
-        },
-        nodes: [{
-          id: '',
-          name: 'foo',
-          resourcePath: ''
-        }]
-      }
-    }
-  }
-}))
-
-jest.spyOn(core, 'getInput').mockImplementation((key) => {
-  return (
-    {
-      'repo-token': 'repotoken',
-      'configuration-path': '.github/auto-label-issue.yml'
-    }[key] ?? ''
-  )
-})
-
-const configuration = fs.readFileSync('__tests__/fixtures/example.yml')
-
-describe('main', () => {
+describe('parseContext', () => {
   beforeEach(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    getContent.mockResolvedValue(<any>{
-      data: { content: configuration, encoding: 'utf8' }
-    })
+    process.env.GITHUB_REPOSITORY = 'foo/bar'
+    process.env.GITHUB_EVENT_PATH = '__tests__/fixtures/payload.json'
+    process.env.GITHUB_REF = 'refname'
   })
 
-  it('runs', async () => {
-    await main()
+  it('takes owner/repo from env', () => {
+    const ctx = parseContext()
+    expect(ctx?.repo.owner).toEqual('foo')
+    expect(ctx?.repo.repo).toEqual('bar')
+  })
 
-    expect(addLabels).toHaveBeenCalledWith({
-      issue_number: 42,
-      labels: ['fox', 'regex'],
-      owner: 'whoami',
-      repo: 'hello-world'
+  it('takes owner/repo from payload instead if the env is empty', () => {
+    delete process.env.GITHUB_REPOSITORY
+    const ctx = parseContext()
+    expect(ctx?.repo.owner).toEqual('owner-in-payload')
+    expect(ctx?.repo.repo).toEqual('repo-in-payload')
+  })
+
+  it('takes issue number and body from payload', () => {
+    const ctx = parseContext()
+    expect(ctx?.issue.number).toEqual(42)
+    expect(ctx?.issue.body).toEqual('issue body')
+  })
+
+  it('takes ref from payload', () => {
+    const ctx = parseContext()
+    expect(ctx?.ref).toEqual('refname')
+  })
+
+  describe('when the payload withoout a issue', () => {
+    beforeEach(() => {
+      process.env.GITHUB_EVENT_PATH = '__tests__/fixtures/payload.no-issue.json'
     })
-    expect(removeLabel).toHaveBeenCalledWith({
-      issue_number: 42,
-      name: 'cow',
-      owner: 'whoami',
-      repo: 'hello-world'
-    })
-    expect(removeLabel).not.toHaveBeenCalledWith({
-      issue_number: 42,
-      name: 'cat',
-      owner: 'whoami',
-      repo: 'hello-world'
+
+    it('is undefined', () => {
+      const ctx = parseContext()
+      expect(ctx).toBeUndefined()
     })
   })
 })

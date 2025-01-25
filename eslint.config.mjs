@@ -17,8 +17,7 @@ export default [
     ...ts.configs.recommended,
     ...compat.config({
       extends: [
-        'standard',
-        'plugin:jest/recommended'
+        'standard'
       ]
     }),
     {

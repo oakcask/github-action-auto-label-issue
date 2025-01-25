@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest'
 import { isMatch, Expression } from '../src/expression'
 
 describe('isMatch', () => {
