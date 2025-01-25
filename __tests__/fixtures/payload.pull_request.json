@@ -5,9 +5,9 @@
         },
         "name": "repo-in-payload"
     },
-    "issue": {
-        "node_id": "issueid",
-        "number": 42,
-        "body": "issue body"
+    "pull_request": {
+        "node_id": "prid",
+        "number": 4242,
+        "body": "pr body"
     }
 }

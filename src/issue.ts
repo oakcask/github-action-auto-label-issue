@@ -1,19 +1,26 @@
 import type { Octokit } from '@octokit/action'
-import { enumerateIssueLabels } from './github.js'
+import { getLabelsOnIssueLike, getRepositoryLabels, updateLabels } from './github.js'
+import * as core from '@actions/core'
 
-export interface Context {
-  repo: {
-    owner: string,
-    repo: string
-  }
-  ref: string
-  issue: {
-    number: number,
-    body: string
-  }
-}
+export type Context = {
+  owner: string,
+  repo: string
+} & (
+  {
+    issue: {
+      id: string,
+      number: number,
+      body: string,
+    }
+  } | {
+    pullRequest: {
+      id: string,
+      number: number,
+      body: string
+    }
+  })
 
-export class Issue {
+class Issue {
   readonly _octokit: Octokit
   readonly _ctx: Context
   readonly _labels: string[]
@@ -27,7 +34,11 @@ export class Issue {
   }
 
   body () {
-    return this._ctx.issue.body
+    if ('issue' in this._ctx) {
+      return this._ctx.issue.body
+    } else {
+      return this._ctx.pullRequest.body
+    }
   }
 
   labels () {
@@ -43,56 +54,36 @@ export class Issue {
   }
 
   async commitChanges () {
-    if (this._labelsToAdd.length > 0) {
-      await addLabels(this._octokit, this._ctx, this._labelsToAdd)
-    }
-    if (this._labelsToRemove.length > 0) {
-      await removeLabels(this._octokit, this._ctx, this._labelsToRemove)
-    }
+    await this.updateLabels()
+  }
+
+  async updateLabels () {
+    const repoLabels = await getRepositoryLabels(this._octokit, this._ctx)
+    const labelsToAdd = this._labelsToAdd.map(name => {
+      if (name in repoLabels) {
+        return repoLabels[name]
+      }
+      core.warning(`ignoring missing label: ${name}`)
+      return undefined
+    }).filter(id => typeof id === 'string')
+    const labelsToRemove = this._labelsToRemove.map(name => {
+      if (name in repoLabels) {
+        return repoLabels[name]
+      }
+      core.warning(`ignoring missing label: ${name}`)
+      return undefined
+    }).filter(id => typeof id === 'string')
+
+    const labelableId = 'issue' in this._ctx ? this._ctx.issue.id : this._ctx.pullRequest.id
+    await updateLabels(this._octokit, {
+      labelableId,
+      labelsToAdd,
+      labelsToRemove
+    })
   }
 }
 
 export async function getIssue (gh: Octokit, ctx: Context): Promise<Issue> {
-  const issueLabels: string[] = await getIssueLabels(gh, ctx)
+  const issueLabels = await getLabelsOnIssueLike(gh, ctx)
   return new Issue(gh, ctx, issueLabels)
-}
-
-async function addLabels (gh: Octokit, ctx: Context, labels: string[]) {
-  try {
-    await gh.rest.issues.addLabels({
-      owner: ctx.repo.owner,
-      repo: ctx.repo.repo,
-      issue_number: ctx.issue.number,
-      labels
-    })
-  } catch (e) {
-    console.warn(e)
-  }
-}
-
-function removeLabels (gh: Octokit, ctx: Context, labels: string[]) {
-  return Promise.all(
-    labels.map(async (label) => {
-      try {
-        await gh.rest.issues.removeLabel({
-          owner: ctx.repo.owner,
-          repo: ctx.repo.repo,
-          issue_number: ctx.issue.number,
-          name: label
-        })
-      } catch (e) {
-        console.warn(e)
-      }
-    })
-  )
-}
-
-async function getIssueLabels (
-  gh: Octokit,
-  { issue: { number: issueNumber }, repo: { owner, repo } }: { issue: { number: number }, repo: { owner: string, repo: string }}) {
-  return await enumerateIssueLabels(gh, {
-    repo,
-    owner,
-    issueNumber
-  })
 }
