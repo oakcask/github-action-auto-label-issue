@@ -58,19 +58,6 @@ function parseIssue (payload: WebhookEvent): { number: number, body: string } | 
   return undefined
 }
 
-async function getContent (gh: Octokit, ctx: Context, path: string) {
-  const r = await gh.rest.repos.getContent({
-    owner: ctx.repo.owner,
-    repo: ctx.repo.repo,
-    path,
-    ref: ctx.ref
-  })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const data = r.data as any
-
-  return Buffer.from(data.content, data.encoding).toString()
-}
-
 async function addLabels (gh: Octokit, ctx: Context, labels: string[]) {
   try {
     await gh.rest.issues.addLabels({
@@ -101,9 +88,9 @@ function removeLabels (gh: Octokit, ctx: Context, labels: string[]) {
   )
 }
 
-async function getConfiguration (gh: Octokit, ctx: Context, path: string): Promise<Configuration> {
+function getConfiguration (path: string): Configuration {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const configString = yaml.load(await getContent(gh, ctx, path)) as any
+  const configString = yaml.load(fs.readFileSync(path, 'utf-8')) as any
   return Object.entries(configString).reduce((a, [key, value]) => {
     if (Array.isArray(value)) {
       a[key] = {
@@ -147,7 +134,7 @@ export async function main () {
   const labelsRemoving: string[] = []
   const issueLabels: string[] = await getIssueLabels(octokit, ctx)
 
-  const config = await getConfiguration(octokit, ctx, configPath)
+  const config = getConfiguration(configPath)
   for (const label in config) {
     const labelConfig = config[label]
     if (isMatch({ body: ctx.issue.body, labels: issueLabels }, labelConfig.expression)) {
