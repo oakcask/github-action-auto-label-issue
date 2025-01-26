@@ -1,0 +1,198 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": {
+        "$ref": "#/definitions/Arm"
+    },
+    "definitions": {
+        "AllExpression<Expression>": {
+            "properties": {
+                "all": {
+                    "items": {
+                        "$ref": "#/definitions/Expression"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "AnyExpression<Expression>": {
+            "properties": {
+                "any": {
+                    "items": {
+                        "$ref": "#/definitions/Expression"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "Arm": {
+            "anyOf": [
+                {
+                    "items": {
+                        "$ref": "#/definitions/Expression"
+                    },
+                    "type": "array"
+                },
+                {
+                    "allOf": [
+                        {
+                            "properties": {
+                                "removeOnMissing": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "$ref": "#/definitions/LabelExpression"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "properties": {
+                                "removeOnMissing": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "$ref": "#/definitions/LabelPatternExpression"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "properties": {
+                                "removeOnMissing": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "$ref": "#/definitions/PatternExpression"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "properties": {
+                                "removeOnMissing": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "$ref": "#/definitions/AnyExpression<Expression>"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "properties": {
+                                "removeOnMissing": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "$ref": "#/definitions/AllExpression<Expression>"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "properties": {
+                                "removeOnMissing": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "$ref": "#/definitions/NotExpression<Expression>"
+                        }
+                    ]
+                },
+                {
+                    "type": "string"
+                }
+            ]
+        },
+        "Expression": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/LabelExpression"
+                },
+                {
+                    "$ref": "#/definitions/LabelPatternExpression"
+                },
+                {
+                    "$ref": "#/definitions/PatternExpression"
+                },
+                {
+                    "$ref": "#/definitions/AnyExpression<Expression>"
+                },
+                {
+                    "$ref": "#/definitions/AllExpression<Expression>"
+                },
+                {
+                    "$ref": "#/definitions/NotExpression<Expression>"
+                },
+                {
+                    "items": {
+                        "$ref": "#/definitions/Expression"
+                    },
+                    "type": "array"
+                },
+                {
+                    "type": "string"
+                }
+            ]
+        },
+        "LabelExpression": {
+            "properties": {
+                "label": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "LabelPatternExpression": {
+            "properties": {
+                "matchLabel": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "NotExpression<Expression>": {
+            "properties": {
+                "not": {
+                    "$ref": "#/definitions/Expression"
+                }
+            },
+            "type": "object"
+        },
+        "PatternExpression": {
+            "properties": {
+                "pattern": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "type": "object"
+}
+

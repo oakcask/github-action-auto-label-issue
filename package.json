@@ -6,7 +6,8 @@
     "test": "vitest --run",
     "format:all": "eslint --fix .",
     "release": "semantic-release",
-    "graphql-codegen": "graphql-codegen --config graphql-codegen.yml"
+    "graphql-codegen": "graphql-codegen --config graphql-codegen.yml",
+    "schema:config": "typescript-json-schema ./src/config-types.ts Schema --out ./src/generated/config.schema.json"
   },
   "author": "oakcask",
   "license": "MIT",
@@ -37,6 +38,7 @@
     "semantic-release-tags": "^2.0.0",
     "typescript": "^5.4.5",
     "typescript-eslint": "^8.0.0",
+    "typescript-json-schema": "^0.65.1",
     "vitest": "^3.0.4"
   },
   "dependencies": {
@@ -44,6 +46,7 @@
     "@actions/github": "^6.0.0",
     "@octokit/action": "^7.0.0",
     "@octokit/graphql": "^8.1.1",
+    "ajv": "^8.17.1",
     "js-yaml": "^4.1.0",
     "tunnel": "^0.0.6"
   },
