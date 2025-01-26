@@ -71,20 +71,23 @@ function getConfiguration (path: string): Configuration {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const configString = yaml.load(fs.readFileSync(path, 'utf-8')) as any
   return Object.entries(configString).reduce((a, [key, value]) => {
-    if (Array.isArray(value)) {
-      a[key] = {
-        expression: value,
-        removeOnMissing: false
-      }
-    } else {
-      const item = value as { [key: string]: unknown }
-      const { removeOnMissing, ...expression } = item
+    if (typeof value === 'object' && value && 'removeOnMissing' in value) {
+      const { removeOnMissing, ...expression } = value
       a[key] = {
         expression,
         removeOnMissing: typeof removeOnMissing === 'boolean' && removeOnMissing
       }
+    } else if (typeof value === 'string') {
+      a[key] = {
+        expression: value,
+        removeOnMissing: false
+      }
+    } else if (Array.isArray(value)) {
+      a[key] = {
+        expression: value,
+        removeOnMissing: false
+      }
     }
-
     return a
   }, {} as Configuration)
 }
