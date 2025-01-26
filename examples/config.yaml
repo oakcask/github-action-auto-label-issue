@@ -34,3 +34,5 @@ label-test:pirate:caribbean:
     - "[Aa]hoy"
     - "[Mm]atey"
     - ([AR]a*|Ya+)rrr+!
+
+label-test: "set: label-test"
