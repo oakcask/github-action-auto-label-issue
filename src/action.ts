@@ -1,13 +1,13 @@
-import fs from 'node:fs'
+import fs from 'node:fs/promises'
 import * as core from '@actions/core'
-import { isMatch } from './ghimex.js'
 import { Octokit } from '@octokit/action'
 import { WebhookEvent } from '@octokit/webhooks-types'
-import { Context, getIssue } from './issue.js'
+import { Parameters, getContext } from './context.js'
 import { getConfiguration } from './config.js'
+import { executeRulebook, loadLegacyRule } from './rulebook.js'
 
-export function parseContext (): Context | undefined {
-  const payload = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH!, 'utf8')) as WebhookEvent
+export async function parseParameters (): Promise<Parameters | undefined> {
+  const payload = JSON.parse(await fs.readFile(process.env.GITHUB_EVENT_PATH!, 'utf8')) as WebhookEvent
   const repo = parseRepo(payload)
   const issue = parseIssue(payload)
   if (issue) {
@@ -63,25 +63,15 @@ function parsePullRequest (payload: WebhookEvent): { id: string, number: number,
 export async function main () {
   const configPath = core.getInput('configuration-path', { required: true })
   const octokit = new Octokit()
-  const ctx = parseContext()
+  const params = await parseParameters()
 
-  if (!ctx) {
+  if (!params) {
     core.info('cannot find a issue or pull request to update.')
     return
   }
 
-  const config = await getConfiguration(configPath)
-  const issue = await getIssue(octokit, ctx)
-  for (const label in config) {
-    const labelConfig = config[label]
-    if (isMatch(issue, labelConfig.expression)) {
-      issue.addLabel(label)
-    } else {
-      if (labelConfig.removeOnMissing) {
-        issue.removeLabel(label)
-      }
-    }
-  }
+  const rulebook = loadLegacyRule(await getConfiguration(configPath))
+  const context = await getContext(octokit, params)
 
-  await issue.commitChanges()
+  await executeRulebook(context, rulebook)
 }

@@ -2,7 +2,7 @@ import type { Octokit } from '@octokit/action'
 import { getLabelsOnIssueLike, getRepositoryLabels, updateLabels } from './github.js'
 import * as core from '@actions/core'
 
-export type Context = {
+export type Parameters = {
   owner: string,
   repo: string
 } & (
@@ -20,24 +20,33 @@ export type Context = {
     }
   })
 
+export interface Context {
+  body (): string
+  labels (): string[]
+
+  onAddLabel (label: string): void
+  onRemoveLabel (label: string): void
+  finish (): Promise<void>
+}
+
 class Issue {
   readonly _octokit: Octokit
-  readonly _ctx: Context
+  readonly _params: Parameters
   readonly _labels: string[]
   _labelsToAdd: string[] = []
   _labelsToRemove: string[] = []
 
-  constructor (octokit: Octokit, ctx: Context, labels: string[]) {
+  constructor (octokit: Octokit, params: Parameters, labels: string[]) {
     this._octokit = octokit
-    this._ctx = ctx
+    this._params = params
     this._labels = labels
   }
 
   body () {
-    if ('issue' in this._ctx) {
-      return this._ctx.issue.body
+    if ('issue' in this._params) {
+      return this._params.issue.body
     } else {
-      return this._ctx.pullRequest.body
+      return this._params.pullRequest.body
     }
   }
 
@@ -45,20 +54,20 @@ class Issue {
     return this._labels
   }
 
-  addLabel (label: string) {
+  onAddLabel (label: string) {
     this._labelsToAdd.push(label)
   }
 
-  removeLabel (label: string) {
+  onRemoveLabel (label: string) {
     this._labelsToRemove.push(label)
   }
 
-  async commitChanges () {
+  async finish () {
     await this.updateLabels()
   }
 
   async updateLabels () {
-    const repoLabels = await getRepositoryLabels(this._octokit, this._ctx)
+    const repoLabels = await getRepositoryLabels(this._octokit, this._params)
     const labelsToAdd = this._labelsToAdd.map(name => {
       if (name in repoLabels) {
         return repoLabels[name]
@@ -74,7 +83,7 @@ class Issue {
       return undefined
     }).filter(id => typeof id === 'string')
 
-    const labelableId = 'issue' in this._ctx ? this._ctx.issue.id : this._ctx.pullRequest.id
+    const labelableId = 'issue' in this._params ? this._params.issue.id : this._params.pullRequest.id
     await updateLabels(this._octokit, {
       labelableId,
       labelsToAdd,
@@ -83,7 +92,7 @@ class Issue {
   }
 }
 
-export async function getIssue (gh: Octokit, ctx: Context): Promise<Issue> {
-  const issueLabels = await getLabelsOnIssueLike(gh, ctx)
-  return new Issue(gh, ctx, issueLabels)
+export async function getContext (gh: Octokit, params: Parameters): Promise<Context> {
+  const issueLabels = await getLabelsOnIssueLike(gh, params)
+  return new Issue(gh, params, issueLabels)
 }

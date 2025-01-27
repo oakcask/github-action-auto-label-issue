@@ -7,7 +7,8 @@
     "format:all": "eslint --fix .",
     "release": "semantic-release",
     "graphql-codegen": "graphql-codegen --config graphql-codegen.yml",
-    "schema:config": "typescript-json-schema ./src/config-types.ts Schema --out ./src/generated/config.schema.json"
+    "schema:config": "typescript-json-schema ./src/config-types.ts Schema --out ./src/generated/config.schema.json",
+    "schema:rulebook": "typescript-json-schema ./src/rulebook-types.ts Schema --out ./src/generated/rulebook.schema.json"
   },
   "author": "oakcask",
   "license": "MIT",

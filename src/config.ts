@@ -2,15 +2,15 @@ import fs from 'node:fs'
 import util from 'node:util'
 import * as yaml from 'js-yaml'
 import * as core from '@actions/core'
-import { Schema } from './config-types.js'
+import type { Schema } from './config-types.js'
 import CONFIG_SCHEMA from './generated/config.schema.json' with { 'type': 'json' }
 import { Ajv } from 'ajv'
-import { Expression } from './ghimex-types.js'
+import type { Expression } from './ghimex-types.js'
 
 const schema = new Ajv({ loadSchema: async () => ({}) })
   .compileAsync<Schema>(CONFIG_SCHEMA)
 
-interface Configuration {
+export interface Configuration {
   [key: string]: {
     removeOnMissing: boolean
     expression: Expression
