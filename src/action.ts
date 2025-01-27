@@ -1,17 +1,10 @@
 import fs from 'node:fs'
 import * as core from '@actions/core'
-import * as yaml from 'js-yaml'
-import { Expression, isMatch } from './ghimex.js'
+import { isMatch } from './ghimex.js'
 import { Octokit } from '@octokit/action'
 import { WebhookEvent } from '@octokit/webhooks-types'
 import { Context, getIssue } from './issue.js'
-
-interface Configuration {
-  [label: string]: {
-    expression: Expression
-    removeOnMissing: boolean;
-  };
-}
+import { getConfiguration } from './config.js'
 
 export function parseContext (): Context | undefined {
   const payload = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH!, 'utf8')) as WebhookEvent
@@ -67,31 +60,6 @@ function parsePullRequest (payload: WebhookEvent): { id: string, number: number,
   }
 }
 
-function getConfiguration (path: string): Configuration {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const configString = yaml.load(fs.readFileSync(path, 'utf-8')) as any
-  return Object.entries(configString).reduce((a, [key, value]) => {
-    if (typeof value === 'object' && value && 'removeOnMissing' in value) {
-      const { removeOnMissing, ...expression } = value
-      a[key] = {
-        expression,
-        removeOnMissing: typeof removeOnMissing === 'boolean' && removeOnMissing
-      }
-    } else if (typeof value === 'string') {
-      a[key] = {
-        expression: value,
-        removeOnMissing: false
-      }
-    } else if (Array.isArray(value)) {
-      a[key] = {
-        expression: value,
-        removeOnMissing: false
-      }
-    }
-    return a
-  }, {} as Configuration)
-}
-
 export async function main () {
   const configPath = core.getInput('configuration-path', { required: true })
   const octokit = new Octokit()
@@ -102,7 +70,7 @@ export async function main () {
     return
   }
 
-  const config = getConfiguration(configPath)
+  const config = await getConfiguration(configPath)
   const issue = await getIssue(octokit, ctx)
   for (const label in config) {
     const labelConfig = config[label]

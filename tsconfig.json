@@ -8,6 +8,7 @@
     "noImplicitAny": false,
     "esModuleInterop": true,
     "moduleResolution": "nodenext",
+    "resolveJsonModule": true
   },
   "exclude": ["node_modules", "__tests__", "__mocks__"]
 }

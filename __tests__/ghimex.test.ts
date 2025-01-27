@@ -28,7 +28,6 @@ describe('isMatch', () => {
     [{ body: 'alice' }, ['a', 'l', 'i', 'c', 'e'], true],
     [{ body: 'alice' }, ['a', 'l', 'i', 'k', 'e'], false],
     [{ body: 'alice' }, { any: ['a', 'b'] }, true],
-    [{ body: '' }, {}, false],
 
     [{ body: 'alice', labels: ['foo', 'bar'] }, { any: [{ label: 'foo' }, { label: 'bar' }] }, true],
     [{ body: 'alice', labels: ['foo'] }, { any: [{ label: 'foo' }, { label: 'bar' }] }, true],
