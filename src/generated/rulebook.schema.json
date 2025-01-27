@@ -1,0 +1,162 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "anyOf": [
+        {
+            "$ref": "#/definitions/Rule"
+        },
+        {
+            "items": {
+                "$ref": "#/definitions/Rule"
+            },
+            "type": "array"
+        }
+    ],
+    "definitions": {
+        "Action": {
+            "anyOf": [
+                {
+                    "properties": {
+                        "addLabel": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                {
+                    "properties": {
+                        "removeLabel": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            ]
+        },
+        "ActionClause": {
+            "properties": {
+                "then": {
+                    "items": {
+                        "$ref": "#/definitions/Action"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "AllExpression<Expression>": {
+            "properties": {
+                "all": {
+                    "items": {
+                        "$ref": "#/definitions/Expression"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "AnyExpression<Expression>": {
+            "properties": {
+                "any": {
+                    "items": {
+                        "$ref": "#/definitions/Expression"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "ConditionClause": {
+            "properties": {
+                "when": {
+                    "$ref": "#/definitions/Expression"
+                }
+            },
+            "type": "object"
+        },
+        "Expression": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/LabelExpression"
+                },
+                {
+                    "$ref": "#/definitions/LabelPatternExpression"
+                },
+                {
+                    "$ref": "#/definitions/PatternExpression"
+                },
+                {
+                    "$ref": "#/definitions/AnyExpression<Expression>"
+                },
+                {
+                    "$ref": "#/definitions/AllExpression<Expression>"
+                },
+                {
+                    "$ref": "#/definitions/NotExpression<Expression>"
+                },
+                {
+                    "items": {
+                        "$ref": "#/definitions/Expression"
+                    },
+                    "type": "array"
+                },
+                {
+                    "type": "string"
+                }
+            ]
+        },
+        "LabelExpression": {
+            "properties": {
+                "label": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "LabelPatternExpression": {
+            "properties": {
+                "matchLabel": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "Metadata": {
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "NotExpression<Expression>": {
+            "properties": {
+                "not": {
+                    "$ref": "#/definitions/Expression"
+                }
+            },
+            "type": "object"
+        },
+        "PatternExpression": {
+            "properties": {
+                "pattern": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "Rule": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Metadata"
+                },
+                {
+                    "$ref": "#/definitions/ConditionClause"
+                },
+                {
+                    "$ref": "#/definitions/ActionClause"
+                }
+            ]
+        }
+    }
+}
+

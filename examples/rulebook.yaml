@@ -1,0 +1,17 @@
+- id: detect-caribbean-pirate-in-issue
+  when:
+    - label: label-test
+    - all: &detect-caribbean-pirate-in-issue
+      - label: label-test:rum
+      - any:
+        - "[Aa]hoy"
+        - "[Mm]atey"
+        - ([AR]a*|Ya+)rrr+!
+  then:
+    - addLabel: label-test:pirate:caribbean
+- id: reverse-detect-caribbean-pirate-in-issue
+  when:
+    - label: label-test
+    - not: *detect-caribbean-pirate-in-issue
+  then:
+    - removeLabel: label-test:pirate:caribbean
