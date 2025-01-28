@@ -47,7 +47,9 @@ jobs:
 ### Configuring Rules
 
 Use `rulebook` input parameter to pass a list of rules inline.
+
 Or `rulebook-path` input parameter to point a external file contains the rulebook.
+Note that the file must be checked out before the action.
 
 #### Syntax
 
