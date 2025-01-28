@@ -1,10 +1,11 @@
 import fs from 'node:fs/promises'
+import util from 'node:util'
 import * as core from '@actions/core'
 import { Octokit } from '@octokit/action'
 import { WebhookEvent } from '@octokit/webhooks-types'
 import { Parameters, getContext } from './context.js'
 import { getConfiguration } from './config.js'
-import { executeRulebook, loadLegacyRule } from './rulebook.js'
+import { executeRulebook, loadLegacyRule, loadRulebook, Rulebook } from './rulebook.js'
 
 export async function parseParameters (): Promise<Parameters | undefined> {
   const payload = JSON.parse(await fs.readFile(process.env.GITHUB_EVENT_PATH!, 'utf8')) as WebhookEvent
@@ -60,8 +61,43 @@ function parsePullRequest (payload: WebhookEvent): { id: string, number: number,
   }
 }
 
+async function tryParseRulebookFromPath (): Promise<Rulebook | undefined> {
+  const rulebookPath = core.getInput('rulebook-path')
+  if (rulebookPath) {
+    core.debug(util.format('loading rulebook from %o', rulebookPath))
+    return await loadRulebook({ path: rulebookPath })
+  }
+}
+
+async function tryParseRulebookFromString (): Promise<Rulebook | undefined> {
+  const rulebook = core.getInput('rulebook')
+  if (rulebook) {
+    core.debug('loading inline rulebook')
+    return await loadRulebook(rulebook)
+  }
+}
+
+async function tryParseRulebookFromLegacyConfiguration (): Promise<Rulebook | undefined> {
+  const configPath = core.getInput('configuration-path')
+  if (configPath) {
+    core.debug(util.format('loading rulebook from legacy configuration: %o', configPath))
+    return loadLegacyRule(await getConfiguration(configPath))
+  }
+}
+
+export async function parseRulebook (): Promise<Rulebook> {
+  const rulebook =
+    (await tryParseRulebookFromString()) ||
+    (await tryParseRulebookFromPath()) ||
+    (await tryParseRulebookFromLegacyConfiguration())
+  if (typeof rulebook !== 'undefined') {
+    return rulebook
+  }
+
+  throw new Error('no rulebook or legacy configuration specified')
+}
+
 export async function main () {
-  const configPath = core.getInput('configuration-path', { required: true })
   const octokit = new Octokit()
   const params = await parseParameters()
 
@@ -70,7 +106,7 @@ export async function main () {
     return
   }
 
-  const rulebook = loadLegacyRule(await getConfiguration(configPath))
+  const rulebook = await parseRulebook()
   const context = await getContext(octokit, params)
 
   await executeRulebook(context, rulebook)

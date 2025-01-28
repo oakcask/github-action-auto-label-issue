@@ -17,18 +17,69 @@ on:
   issues:
 
 jobs:
-  auto-labeling:
+  example:
     runs-on: ubuntu-latest
     steps:
-      - uses: oakcask/github-action-auto-label-issue@v1
+      - name: example executing a inline rulebook
+        uses: oakcask/github-action-auto-label-issue@v2
         with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          configuration-path: .github/auto-label.yml
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          rulebook: |-
+            - id: detect-caribbean-pirate-in-issue
+              when:
+                - label: label-test
+                - all: &detect-caribbean-pirate-in-issue
+                  - label: label-test:rum
+                  - any:
+                    - "[Aa]hoy"
+                    - "[Mm]atey"
+                    - ([AR]a*|Ya+)rrr+!
+              then:
+                - addLabel: label-test:pirate:caribbean
+            - id: reverse-detect-caribbean-pirate-in-issue
+              when:
+                - label: label-test
+                - not: *detect-caribbean-pirate-in-issue
+              then:
+                - removeLabel: label-test:pirate:caribbean
 ```
 
-### Configuring Labels
+### Configuring Rules
 
-Now, write labeling rules to the YAML file pointed by `configuration-path`.
+Use `rulebook` input parameter to pass a list of rules inline.
+Or `rulebook-path` input parameter to point a external file contains the rulebook.
+
+#### Syntax
+
+Rulebook is a YAML-based DSL to describe rules and actions to execute.
+A Rulebook contains one Rule or a list of Rules.
+
+```yaml
+  # id used for name this rule.
+- id: detect-pirate
+  when:
+    # when-clause is the condition to test against a issue-like item (issues or pull requests).
+    all: # when all the conditions below match:
+      - label: rum # when the item is labeled as "rum".
+      - any: # when any conditions below match:
+          # String is interpreted as regular expression. And tested against the body of the item.
+          # In this case, this condition is matched
+          # when the body contains like "Ahoy", "matey", "Yaaaarrrrr!", etc. 
+          - "[Aa]hoy" 
+          - "[Mm]atey"
+          - ([AR]a*|Ya+)rrr+!
+  then:
+    # then-clause is list of action executed when the condition are met.
+    - addLabel: pirate
+    - addLabel: pirate:caribbean
+```
+
+Check out the [example rulebook](./examples/rulebook.yaml).
+
+### Legacy Configuration
+
+In version 1, labeling rules are called "configuration",
+stored in a YAML file pointed by `configuration-path` input parameter.
 
 ```yaml
 # add fox label when "fox" is found
