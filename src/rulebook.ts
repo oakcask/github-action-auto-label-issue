@@ -9,14 +9,16 @@ import type { Configuration } from './config.js'
 import type { Context } from './context.js'
 import { isMatch } from './ghimex.js'
 
+export type Rulebook = Schema
+
 const schema = new Ajv({ loadSchema: async () => ({}) })
-  .compileAsync<Schema>(SCHEMA_JSON)
+  .compileAsync<Rulebook>(SCHEMA_JSON)
 
 type LoadOption
   = { path: string }
   | string
 
-export async function loadRulebook (option: LoadOption): Promise<Schema | undefined> {
+export async function loadRulebook (option: LoadOption): Promise<Rulebook | undefined> {
   if (typeof option === 'object' && 'path' in option) {
     return loadRulebook(await fs.readFile(option.path, 'utf8'))
   }
@@ -32,7 +34,7 @@ export async function loadRulebook (option: LoadOption): Promise<Schema | undefi
   }
 }
 
-export function loadLegacyRule (configuration: Configuration): Schema {
+export function loadLegacyRule (configuration: Configuration): Rulebook {
   const rules: Rule[] = []
 
   for (const label in configuration) {
@@ -77,7 +79,7 @@ function executeRule (context: Context, rule: Rule) {
   }
 }
 
-export async function executeRulebook (context: Context, rule: Schema) {
+export async function executeRulebook (context: Context, rule: Rulebook) {
   if (Array.isArray(rule)) {
     for (const r of rule) {
       executeRule(context, r)

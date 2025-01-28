@@ -7,9 +7,19 @@ inputs:
     description: |-
       The repository's secret to authorize API invocations.
       If ommited, GITHUB_TOKEN environment variable is used instead.
+  rulebook:
+    description: A set of rules inlined. see examples/rulebook.yaml
+    required: false
+  rulebook-path:
+    description: |-
+      Path to a file contains a set of rules. see examples/rulebook.yaml
+      Ignored when `rulebook` is specified.
+    required: false
   configuration-path:
-    description: The path for label configurations
-    required: true
+    description: |-
+      The path for label configurations.
+      Ignored when either `rulebook` or `rulebook-path` is specified.
+    required: false
 runs:
   using: node20
   main: dist/index.js
