@@ -16,18 +16,18 @@ jobs:
       - uses: int128/update-generated-files-action@v2
         with:
           commit-message: "fix: update graphql types"
-          token: ${{ secrets.GITHUB_TOKEN  }}
+          token: ${{ secrets.CI_TOKEN }}
       - run: pnpm run schema:config
       - run: pnpm run schema:rulebook
       - uses: int128/update-generated-files-action@v2
         with:
           commit-message: "fix: update json schemas"
-          token: ${{ secrets.GITHUB_TOKEN  }}
+          token: ${{ secrets.CI_TOKEN }}
       - run: pnpm run format:all
       - uses: int128/update-generated-files-action@v2
         with:
           commit-message: "style: `$ npm run format:all`"
-          token: ${{ secrets.GITHUB_TOKEN  }}
+          token: ${{ secrets.CI_TOKEN }}
       - run: pnpm run test
   integration:
     runs-on: ubuntu-latest
