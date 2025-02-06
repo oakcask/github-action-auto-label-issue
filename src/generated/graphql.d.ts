@@ -6953,7 +6953,9 @@ export enum EnterpriseAdministratorRole {
   /** Represents a billing manager of the enterprise account. */
   BillingManager = 'BILLING_MANAGER',
   /** Represents an owner of the enterprise account. */
-  Owner = 'OWNER'
+  Owner = 'OWNER',
+  /** Unaffiliated member of the enterprise account without an admin role. */
+  Unaffiliated = 'UNAFFILIATED'
 }
 
 /** The possible values for the enterprise allow private repository forking policy value. */
