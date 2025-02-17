@@ -4123,6 +4123,8 @@ export type CreateProjectV2FieldInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
   /** The data type of the field. */
   dataType: ProjectV2CustomFieldType;
+  /** Configuration for an iteration field. */
+  iterationConfiguration?: InputMaybe<ProjectV2IterationFieldConfigurationInput>;
   /** The name of the field. */
   name: Scalars['String']['input'];
   /** The ID of the Project to create the field in. */
@@ -10903,14 +10905,14 @@ export type MaxFilePathLengthParametersInput = {
   maxFilePathLength: Scalars['Int']['input'];
 };
 
-/** Prevent commits that exceed a specified file size limit from being pushed to the commit. */
+/** Prevent commits that exceed a specified file size limit from being pushed to the commit graph. */
 export type MaxFileSizeParameters = {
   __typename?: 'MaxFileSizeParameters';
   /** The maximum file size allowed in megabytes. This limit does not apply to Git Large File Storage (Git LFS). */
   maxFileSize: Scalars['Int']['output'];
 };
 
-/** Prevent commits that exceed a specified file size limit from being pushed to the commit. */
+/** Prevent commits that exceed a specified file size limit from being pushed to the commit graph. */
 export type MaxFileSizeParametersInput = {
   /** The maximum file size allowed in megabytes. This limit does not apply to Git Large File Storage (Git LFS). */
   maxFileSize: Scalars['Int']['input'];
@@ -17960,6 +17962,8 @@ export type ProjectV2Connection = {
 export enum ProjectV2CustomFieldType {
   /** Date */
   Date = 'DATE',
+  /** Iteration */
+  Iteration = 'ITERATION',
   /** Number */
   Number = 'NUMBER',
   /** Single Select */
@@ -18505,6 +18509,16 @@ export enum ProjectV2ItemType {
   Redacted = 'REDACTED'
 }
 
+/** Represents an iteration */
+export type ProjectV2Iteration = {
+  /** The duration of the iteration, in days. */
+  duration: Scalars['Int']['input'];
+  /** The start date for the iteration. */
+  startDate: Scalars['Date']['input'];
+  /** The title for the iteration. */
+  title: Scalars['String']['input'];
+};
+
 /** An iteration field inside a project. */
 export type ProjectV2IterationField = Node & ProjectV2FieldCommon & {
   __typename?: 'ProjectV2IterationField';
@@ -18537,6 +18551,16 @@ export type ProjectV2IterationFieldConfiguration = {
   iterations: Array<ProjectV2IterationFieldIteration>;
   /** The iteration's start day of the week */
   startDay: Scalars['Int']['output'];
+};
+
+/** Represents an iteration field configuration. */
+export type ProjectV2IterationFieldConfigurationInput = {
+  /** The duration of each iteration, in days. */
+  duration: Scalars['Int']['input'];
+  /** Zero or more iterations for the field. */
+  iterations: Array<ProjectV2Iteration>;
+  /** The start date for the first iteration. */
+  startDate: Scalars['Date']['input'];
 };
 
 /** Iteration field iteration settings for a project. */
@@ -24442,7 +24466,7 @@ export enum RepositoryRuleType {
   LockBranch = 'LOCK_BRANCH',
   /** Prevent commits that include file paths that exceed a specified character limit from being pushed to the commit graph. */
   MaxFilePathLength = 'MAX_FILE_PATH_LENGTH',
-  /** Prevent commits that exceed a specified file size limit from being pushed to the commit. */
+  /** Prevent commits that exceed a specified file size limit from being pushed to the commit graph. */
   MaxFileSize = 'MAX_FILE_SIZE',
   /** Max ref updates */
   MaxRefUpdates = 'MAX_REF_UPDATES',
@@ -30510,6 +30534,8 @@ export type UpdateProjectV2FieldInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
   /** The ID of the field to update. */
   fieldId: Scalars['ID']['input'];
+  /** Configuration for an iteration field. */
+  iterationConfiguration?: InputMaybe<ProjectV2IterationFieldConfigurationInput>;
   /** The name to update. */
   name?: InputMaybe<Scalars['String']['input']>;
   /**
