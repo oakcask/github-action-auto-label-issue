@@ -23,7 +23,7 @@
     "@graphql-codegen/introspection": "^4.0.3",
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-codegen/typescript-operations": "^4.2.0",
-    "@octokit/types": "^13.7.0",
+    "@octokit/types": "^14.0.0",
     "@octokit/webhooks-types": "^7.6.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/github": "^11.0.0",
