@@ -5,7 +5,7 @@ class TestIssue {
   readonly _body: string
   readonly _labels: string[]
 
-  constructor (given: { body: string, labels?: string[]}) {
+  constructor (given: { body: string, labels?: string[] }) {
     this._body = given.body
     this._labels = given.labels || []
   }

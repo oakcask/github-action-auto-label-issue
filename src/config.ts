@@ -3,7 +3,7 @@ import util from 'node:util'
 import * as yaml from 'js-yaml'
 import * as core from '@actions/core'
 import type { Schema } from './config-types.js'
-import CONFIG_SCHEMA from './generated/config.schema.json' with { 'type': 'json' }
+import CONFIG_SCHEMA from './generated/config.schema.json' with { type: 'json' }
 import { Ajv } from 'ajv'
 import type { Expression } from './ghimex-types.js'
 
@@ -17,7 +17,6 @@ export interface Configuration {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function parse (data: any): Promise<Schema | undefined> {
   const validate = await schema
   if (validate(data)) {

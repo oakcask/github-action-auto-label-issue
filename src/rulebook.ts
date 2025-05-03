@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import util from 'node:util'
 import * as core from '@actions/core'
 import yaml from 'js-yaml'
-import SCHEMA_JSON from './generated/rulebook.schema.json' with { 'type': 'json' }
+import SCHEMA_JSON from './generated/rulebook.schema.json' with { type: 'json' }
 import type { Schema, Rule, Action } from './rulebook-types.js'
 import { Ajv } from 'ajv'
 import type { Configuration } from './config.js'

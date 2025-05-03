@@ -57,7 +57,7 @@ function queryNextPullRequestLabels (gh: Octokit, variables: NextPullRequestLabe
 type GetLabelsRequest = {
   repo: string,
   owner: string,
-} & ({ issue: { number: number }} | { pullRequest: { number: number }})
+} & ({ issue: { number: number } } | { pullRequest: { number: number } })
 
 export async function getLabelsOnIssueLike (gh: Octokit, { repo, owner, ...issueLike }: GetLabelsRequest): Promise<string[]> {
   const labels: string[] = []
