@@ -18,10 +18,10 @@
   "type": "module",
   "devDependencies": {
     "@eslint/eslintrc": "^3.0.2",
-    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/cli": "^5.0.5",
     "@graphql-codegen/introspection": "^4.0.3",
-    "@graphql-codegen/typescript": "^4.0.1",
-    "@graphql-codegen/typescript-operations": "^4.2.0",
+    "@graphql-codegen/typescript": "^4.1.6",
+    "@graphql-codegen/typescript-operations": "^4.6.0",
     "@octokit/types": "^14.0.0",
     "@octokit/webhooks-types": "^7.6.1",
     "@semantic-release/changelog": "^6.0.3",
