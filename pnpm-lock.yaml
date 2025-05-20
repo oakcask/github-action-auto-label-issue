@@ -12,11 +12,11 @@ importers:
         specifier: ^1.10.1
         version: 1.11.1
       '@octokit/action':
-        specifier: ^7.0.0
-        version: 7.0.2
+        specifier: ^8.0.0
+        version: 8.0.0
       '@octokit/graphql':
-        specifier: ^8.1.1
-        version: 8.2.2
+        specifier: ^9.0.0
+        version: 9.0.0
       ajv:
         specifier: ^8.17.1
         version: 8.17.1
@@ -713,9 +713,9 @@ packages:
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
 
-  '@octokit/action@7.0.2':
-    resolution: {integrity: sha512-mM/NxCh5oviEhNB7NOwFR9SeGMx32TYR0N4lt+SdNsrQmm+ozKgHXZddQixrDzg0b4tWAsMi85nHLeIs5bM5jg==}
-    engines: {node: '>= 18'}
+  '@octokit/action@8.0.0':
+    resolution: {integrity: sha512-uBFEAONwahq/38JJK6QiHB2g8+KO5axDiL6w/O2QkexkHNRr4BgsBrnz6t7oji+z9AzSsB1xZ/WHEIRCHW9cPQ==}
+    engines: {node: '>= 20'}
 
   '@octokit/auth-action@5.1.2':
     resolution: {integrity: sha512-KgR3hIHz1iHytBrWdsVRN7elYtF6TP2fKIlnpjagT1rGY2WnALckO6aOUjwxGOyrnXd44j/QSKQilCnAswJg3A==}
@@ -736,6 +736,10 @@ packages:
   '@octokit/graphql@8.2.2':
     resolution: {integrity: sha512-Yi8hcoqsrXGdt0yObxbebHXFOiUA+2v3n53epuOg1QUgOB6c4XzvisBNVXJSl8RYA5KrDuSL2yq9Qmqe5N0ryA==}
     engines: {node: '>= 18'}
+
+  '@octokit/graphql@9.0.0':
+    resolution: {integrity: sha512-5Xo42p9btFrcbYUOCStbrRRTpTmVIvEBiTRW7OXSOHB+RFgUxURv7TJhtB3p3Z6vIGzD8+vot5/X0h2CLDCtpw==}
+    engines: {node: '>= 20'}
 
   '@octokit/openapi-types@25.0.0':
     resolution: {integrity: sha512-FZvktFu7HfOIJf2BScLKIEYjDsw6RKc7rBJCdvCTfKsVnx2GEB/Nbzjr29DUdb7vQhlzS/j8qDzdditP0OC6aw==}
@@ -4915,7 +4919,7 @@ snapshots:
 
   '@nolyfill/is-core-module@1.0.39': {}
 
-  '@octokit/action@7.0.2':
+  '@octokit/action@8.0.0':
     dependencies:
       '@octokit/auth-action': 5.1.2
       '@octokit/core': 6.1.5
@@ -4947,6 +4951,12 @@ snapshots:
       universal-user-agent: 7.0.2
 
   '@octokit/graphql@8.2.2':
+    dependencies:
+      '@octokit/request': 9.2.3
+      '@octokit/types': 14.0.0
+      universal-user-agent: 7.0.2
+
+  '@octokit/graphql@9.0.0':
     dependencies:
       '@octokit/request': 9.2.3
       '@octokit/types': 14.0.0
