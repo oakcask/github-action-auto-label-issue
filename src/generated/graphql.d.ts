@@ -2430,7 +2430,10 @@ export type ClosedEvent = Node & UniformResourceLocatable & {
   id: Scalars['ID']['output'];
   /** The HTTP path for this closed event. */
   resourcePath: Scalars['URI']['output'];
-  /** The reason the issue state was changed to closed. */
+  /**
+   * The reason the issue state was changed to closed.
+   * @deprecated The state reason for duplicate issue is now returned by default. Removal on 2025-10-01 UTC.
+   */
   stateReason?: Maybe<IssueStateReason>;
   /** The HTTP URL for this closed event. */
   url: Scalars['URI']['output'];
@@ -9671,7 +9674,10 @@ export type Issue = Assignable & Closable & Comment & Deletable & Labelable & Lo
   resourcePath: Scalars['URI']['output'];
   /** Identifies the state of the issue. */
   state: IssueState;
-  /** Identifies the reason for the issue state. */
+  /**
+   * Identifies the reason for the issue state.
+   * @deprecated The state reason for duplicate issue is now returned by default. Removal on 2025-10-01 UTC.
+   */
   stateReason?: Maybe<IssueStateReason>;
   /** A list of sub-issues associated with the Issue. */
   subIssues: IssueConnection;
@@ -10180,10 +10186,7 @@ export enum IssueState {
 export enum IssueStateReason {
   /** An issue that has been closed as completed */
   Completed = 'COMPLETED',
-  /**
-   * An issue that has been closed as a duplicate. To retrieve this value, set
-   * `(enableDuplicate: true)` when querying the stateReason field.
-   */
+  /** An issue that has been closed as a duplicate. */
   Duplicate = 'DUPLICATE',
   /** An issue that has been closed as not planned */
   NotPlanned = 'NOT_PLANNED',
@@ -10908,6 +10911,8 @@ export type Mannequin = Actor & Node & UniformResourceLocatable & {
   id: Scalars['ID']['output'];
   /** The username of the actor. */
   login: Scalars['String']['output'];
+  /** The display name of the imported mannequin. */
+  name?: Maybe<Scalars['String']['output']>;
   /** The HTML path to this resource. */
   resourcePath: Scalars['URI']['output'];
   /** Identifies the date and time when the object was last updated. */
@@ -23751,6 +23756,8 @@ export type Release = Node & Reactable & UniformResourceLocatable & {
   descriptionHTML?: Maybe<Scalars['HTML']['output']>;
   /** The Node ID of the Release object */
   id: Scalars['ID']['output'];
+  /** Whether or not the release is immutable */
+  immutable: Scalars['Boolean']['output'];
   /** Whether or not the release is a draft */
   isDraft: Scalars['Boolean']['output'];
   /** Whether or not the release is the latest releast */
