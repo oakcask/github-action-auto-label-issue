@@ -20,7 +20,7 @@ export interface Configuration {
   };
 }
 
-async function parse(data: any): Promise<Schema | undefined> {
+async function parse(data: unknown): Promise<Schema | undefined> {
   const validate = await schema;
   if (validate(data)) {
     return data;
