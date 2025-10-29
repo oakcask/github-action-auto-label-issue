@@ -3,8 +3,8 @@ import util from 'node:util';
 import * as core from '@actions/core';
 import { Octokit } from '@octokit/action';
 import type { WebhookEvent } from '@octokit/webhooks-types';
-import { type Parameters, getContext } from './context.js';
 import { getConfiguration } from './config.js';
+import { getContext, type Parameters } from './context.js';
 import {
   executeRulebook,
   loadLegacyRule,

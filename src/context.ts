@@ -1,10 +1,10 @@
+import * as core from '@actions/core';
 import type { Octokit } from '@octokit/action';
 import {
   getLabelsOnIssueLike,
   getRepositoryLabels,
   updateLabels,
 } from './github.js';
-import * as core from '@actions/core';
 
 export type Parameters = {
   owner: string;

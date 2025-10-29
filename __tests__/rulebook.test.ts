@@ -1,8 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
-import type { Rule } from '../src/rulebook-types.js';
-import { executeRulebook, loadLegacyRule, loadRulebook } from '../src/rulebook';
-import type { Expression } from '../src/ghimex-types';
+import { describe, expect, it, vi } from 'vitest';
 import type { Context } from '../src/context';
+import type { Expression } from '../src/ghimex-types';
+import { executeRulebook, loadLegacyRule, loadRulebook } from '../src/rulebook';
+import type { Rule } from '../src/rulebook-types.js';
 
 describe('loadRulebook', () => {
   it('loads examples/rulebook.yaml', async () => {

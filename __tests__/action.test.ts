@@ -1,7 +1,7 @@
-import { describe, expect, it, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { parseParameters, parseRulebook } from '../src/action';
-import { loadLegacyRule } from '../src/rulebook';
 import { getConfiguration } from '../src/config';
+import { loadLegacyRule } from '../src/rulebook';
 
 describe('parseParameters', () => {
   beforeEach(() => {

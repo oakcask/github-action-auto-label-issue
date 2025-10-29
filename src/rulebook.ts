@@ -1,15 +1,15 @@
 import fs from 'node:fs/promises';
 import util from 'node:util';
 import * as core from '@actions/core';
+import { Ajv } from 'ajv';
 import yaml from 'js-yaml';
+import type { Configuration } from './config.js';
+import type { Context } from './context.js';
 import SCHEMA_JSON from './generated/rulebook.schema.json' with {
   type: 'json',
 };
-import type { Schema, Rule, Action } from './rulebook-types.js';
-import { Ajv } from 'ajv';
-import type { Configuration } from './config.js';
-import type { Context } from './context.js';
 import { isMatch } from './ghimex.js';
+import type { Action, Rule, Schema } from './rulebook-types.js';
 
 export type Rulebook = Schema;
 

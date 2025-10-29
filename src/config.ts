@@ -1,12 +1,12 @@
 import fs from 'node:fs';
 import util from 'node:util';
-import * as yaml from 'js-yaml';
 import * as core from '@actions/core';
+import { Ajv } from 'ajv';
+import * as yaml from 'js-yaml';
 import type { Schema } from './config-types.js';
 import CONFIG_SCHEMA from './generated/config.schema.json' with {
   type: 'json',
 };
-import { Ajv } from 'ajv';
 import type { Expression } from './ghimex-types.js';
 
 const schema = new Ajv({ loadSchema: async () => ({}) }).compileAsync<Schema>(

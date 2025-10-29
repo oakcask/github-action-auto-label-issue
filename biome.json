@@ -17,9 +17,9 @@
     "enabled": true,
     "rules": {
       "recommended": true,
-	  "suspicious": {
-		"noThenProperty": "off"
-	  }
+      "suspicious": {
+        "noThenProperty": "off"
+      }
     }
   },
   "javascript": {
