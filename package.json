@@ -17,6 +17,7 @@
   },
   "type": "module",
   "devDependencies": {
+    "@biomejs/biome": "2.3.2",
     "@eslint/eslintrc": "^3.0.2",
     "@graphql-codegen/cli": "^5.0.5",
     "@graphql-codegen/introspection": "^4.0.3",
