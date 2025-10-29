@@ -1,13 +1,26 @@
-import type { Octokit } from '@octokit/action'
-import type { RequestParameters } from '@octokit/types'
-import type { NextIssueLabelsQuery, NextIssueLabelsQueryVariables, NextPullRequestLabelsQuery, NextPullRequestLabelsQueryVariables, NextRepositoryLabelsQuery, NextRepositoryLabelsQueryVariables, UpdateLabelsMutation, UpdateLabelsMutationVariables } from './generated/graphql.js'
+import type { Octokit } from '@octokit/action';
+import type { RequestParameters } from '@octokit/types';
+import type {
+  NextIssueLabelsQuery,
+  NextIssueLabelsQueryVariables,
+  NextPullRequestLabelsQuery,
+  NextPullRequestLabelsQueryVariables,
+  NextRepositoryLabelsQuery,
+  NextRepositoryLabelsQueryVariables,
+  UpdateLabelsMutation,
+  UpdateLabelsMutationVariables,
+} from './generated/graphql.js';
 
 type Request = {
-  __typename?: 'Query' | 'Mutation'
-}
+  __typename?: 'Query' | 'Mutation';
+};
 
-function req<T extends Request> (gh: Octokit, query: string, variables: RequestParameters): Promise<T> {
-  return gh.graphql<T>(query, variables)
+function req<T extends Request>(
+  gh: Octokit,
+  query: string,
+  variables: RequestParameters,
+): Promise<T> {
+  return gh.graphql<T>(query, variables);
 }
 
 const nextIssueLabelsQuery = /* GraphQL */ `
@@ -26,10 +39,13 @@ const nextIssueLabelsQuery = /* GraphQL */ `
       }
     }
   }
-`
+`;
 
-function queryNextIssueLabels (gh: Octokit, variables: NextIssueLabelsQueryVariables): Promise<NextIssueLabelsQuery> {
-  return req(gh, nextIssueLabelsQuery, variables)
+function queryNextIssueLabels(
+  gh: Octokit,
+  variables: NextIssueLabelsQueryVariables,
+): Promise<NextIssueLabelsQuery> {
+  return req(gh, nextIssueLabelsQuery, variables);
 }
 
 const nextPullRequestLabelsQuery = /* GraphQL */ `
@@ -48,59 +64,76 @@ const nextPullRequestLabelsQuery = /* GraphQL */ `
       }
     }
   }
-`
+`;
 
-function queryNextPullRequestLabels (gh: Octokit, variables: NextPullRequestLabelsQueryVariables): Promise<NextPullRequestLabelsQuery> {
-  return req(gh, nextPullRequestLabelsQuery, variables)
+function queryNextPullRequestLabels(
+  gh: Octokit,
+  variables: NextPullRequestLabelsQueryVariables,
+): Promise<NextPullRequestLabelsQuery> {
+  return req(gh, nextPullRequestLabelsQuery, variables);
 }
 
 type GetLabelsRequest = {
-  repo: string,
-  owner: string,
-} & ({ issue: { number: number } } | { pullRequest: { number: number } })
+  repo: string;
+  owner: string;
+} & ({ issue: { number: number } } | { pullRequest: { number: number } });
 
-export async function getLabelsOnIssueLike (gh: Octokit, { repo, owner, ...issueLike }: GetLabelsRequest): Promise<string[]> {
-  const labels: string[] = []
-  let lastEndCursor: string | undefined
-  let done = false
+export async function getLabelsOnIssueLike(
+  gh: Octokit,
+  { repo, owner, ...issueLike }: GetLabelsRequest,
+): Promise<string[]> {
+  const labels: string[] = [];
+  let lastEndCursor: string | undefined;
+  let done = false;
 
   while (!done) {
     if ('issue' in issueLike) {
       const res = await queryNextIssueLabels(gh, {
-        repo, owner, number: issueLike.issue.number, pageSize: 100, lastEndCursor
-      })
+        repo,
+        owner,
+        number: issueLike.issue.number,
+        pageSize: 100,
+        lastEndCursor,
+      });
       if (!res.repository?.issue?.labels?.nodes) {
-        throw Error(`failed to get labels on issue #${issueLike.issue.number}`)
+        throw Error(`failed to get labels on issue #${issueLike.issue.number}`);
       }
-      const { endCursor, hasNextPage } = res.repository.issue.labels.pageInfo
+      const { endCursor, hasNextPage } = res.repository.issue.labels.pageInfo;
       for (const node of res.repository.issue.labels.nodes) {
         if (node?.name) {
-          labels.push(node.name)
+          labels.push(node.name);
         }
       }
-      lastEndCursor = endCursor ?? undefined
-      done = !hasNextPage
+      lastEndCursor = endCursor ?? undefined;
+      done = !hasNextPage;
     } else if ('pullRequest' in issueLike) {
       const res = await queryNextPullRequestLabels(gh, {
-        repo, owner, number: issueLike.pullRequest.number, pageSize: 100, lastEndCursor
-      })
+        repo,
+        owner,
+        number: issueLike.pullRequest.number,
+        pageSize: 100,
+        lastEndCursor,
+      });
       if (!res.repository?.pullRequest?.labels?.nodes) {
-        throw Error(`failed to get labels on pull request #${issueLike.pullRequest.number}`)
+        throw Error(
+          `failed to get labels on pull request #${issueLike.pullRequest.number}`,
+        );
       }
-      const { endCursor, hasNextPage } = res.repository.pullRequest.labels.pageInfo
+      const { endCursor, hasNextPage } =
+        res.repository.pullRequest.labels.pageInfo;
       for (const node of res.repository.pullRequest.labels.nodes) {
         if (node?.name) {
-          labels.push(node.name)
+          labels.push(node.name);
         }
       }
-      lastEndCursor = endCursor ?? undefined
-      done = !hasNextPage
+      lastEndCursor = endCursor ?? undefined;
+      done = !hasNextPage;
     } else {
-      throw new Error('unreachable')
+      throw new Error('unreachable');
     }
   }
 
-  return labels
+  return labels;
 }
 
 const nextRepositoryLabelsQuery = /* GraphQL */ `
@@ -118,39 +151,48 @@ const nextRepositoryLabelsQuery = /* GraphQL */ `
       }
     }
   }
-`
+`;
 
-function queryNextRepositoryLabels (gh: Octokit, variables: NextRepositoryLabelsQueryVariables): Promise<NextRepositoryLabelsQuery> {
-  return req(gh, nextRepositoryLabelsQuery, variables)
+function queryNextRepositoryLabels(
+  gh: Octokit,
+  variables: NextRepositoryLabelsQueryVariables,
+): Promise<NextRepositoryLabelsQuery> {
+  return req(gh, nextRepositoryLabelsQuery, variables);
 }
 
 interface RepoLabelIdsByName {
-  [name: string]: string
+  [name: string]: string;
 }
 
-export async function getRepositoryLabels (gh: Octokit, { repo, owner }: { repo: string, owner: string }): Promise<RepoLabelIdsByName> {
-  const labels: RepoLabelIdsByName = {}
-  let lastEndCursor: string | undefined
-  let done = false
+export async function getRepositoryLabels(
+  gh: Octokit,
+  { repo, owner }: { repo: string; owner: string },
+): Promise<RepoLabelIdsByName> {
+  const labels: RepoLabelIdsByName = {};
+  let lastEndCursor: string | undefined;
+  let done = false;
 
   while (!done) {
     const res = await queryNextRepositoryLabels(gh, {
-      repo, owner, pageSize: 100, lastEndCursor
-    })
+      repo,
+      owner,
+      pageSize: 100,
+      lastEndCursor,
+    });
     if (!res.repository?.labels?.nodes) {
-      throw Error('failed to get labels of repository')
+      throw Error('failed to get labels of repository');
     }
-    const { endCursor, hasNextPage } = res.repository.labels.pageInfo
+    const { endCursor, hasNextPage } = res.repository.labels.pageInfo;
     for (const node of res.repository.labels.nodes) {
       if (node?.name) {
-        labels[node.name] = node.id
+        labels[node.name] = node.id;
       }
     }
-    lastEndCursor = endCursor ?? undefined
-    done = !hasNextPage
+    lastEndCursor = endCursor ?? undefined;
+    done = !hasNextPage;
   }
 
-  return labels
+  return labels;
 }
 
 const updateLabelsMutation = /* GraphQL */ `
@@ -172,8 +214,11 @@ const updateLabelsMutation = /* GraphQL */ `
       __typename
     }
   }
-`
+`;
 
-export function updateLabels (gh: Octokit, variables: UpdateLabelsMutationVariables): Promise<UpdateLabelsMutation> {
-  return req(gh, updateLabelsMutation, variables)
+export function updateLabels(
+  gh: Octokit,
+  variables: UpdateLabelsMutationVariables,
+): Promise<UpdateLabelsMutation> {
+  return req(gh, updateLabelsMutation, variables);
 }

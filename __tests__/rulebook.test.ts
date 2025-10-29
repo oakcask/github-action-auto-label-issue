@@ -1,13 +1,13 @@
-import { describe, it, expect, vi } from 'vitest'
-import type { Rule } from '../src/rulebook-types.js'
-import { executeRulebook, loadLegacyRule, loadRulebook } from '../src/rulebook'
-import type { Expression } from '../src/ghimex-types'
-import { Context } from '../src/context'
+import { describe, expect, it, vi } from 'vitest';
+import type { Context } from '../src/context';
+import type { Expression } from '../src/ghimex-types';
+import { executeRulebook, loadLegacyRule, loadRulebook } from '../src/rulebook';
+import type { Rule } from '../src/rulebook-types.js';
 
 describe('loadRulebook', () => {
   it('loads examples/rulebook.yaml', async () => {
-    const rulebook = await loadRulebook({ path: 'examples/rulebook.yaml' })
-    expect(rulebook).not.toBeUndefined()
+    const rulebook = await loadRulebook({ path: 'examples/rulebook.yaml' });
+    expect(rulebook).not.toBeUndefined();
     expect(rulebook).toStrictEqual([
       {
         id: 'detect-caribbean-pirate-in-issue',
@@ -17,18 +17,12 @@ describe('loadRulebook', () => {
             all: [
               { label: 'label-test:rum' },
               {
-                any: [
-                  '[Aa]hoy',
-                  '[Mm]atey',
-                  '([AR]a*|Ya+)rrr+!'
-                ]
-              }
-            ]
-          }
+                any: ['[Aa]hoy', '[Mm]atey', '([AR]a*|Ya+)rrr+!'],
+              },
+            ],
+          },
         ],
-        then: [
-          { addLabel: 'label-test:pirate:caribbean' }
-        ]
+        then: [{ addLabel: 'label-test:pirate:caribbean' }],
       },
       {
         id: 'reverse-detect-caribbean-pirate-in-issue',
@@ -38,22 +32,16 @@ describe('loadRulebook', () => {
             not: [
               { label: 'label-test:rum' },
               {
-                any: [
-                  '[Aa]hoy',
-                  '[Mm]atey',
-                  '([AR]a*|Ya+)rrr+!'
-                ]
-              }
-            ]
-          }
+                any: ['[Aa]hoy', '[Mm]atey', '([AR]a*|Ya+)rrr+!'],
+              },
+            ],
+          },
         ],
-        then: [
-          { removeLabel: 'label-test:pirate:caribbean' }
-        ]
-      }
-    ])
-  })
-})
+        then: [{ removeLabel: 'label-test:pirate:caribbean' }],
+      },
+    ]);
+  });
+});
 
 describe('loadLegacyRule', () => {
   it('loads Rulebook from legacy Configuration', () => {
@@ -61,65 +49,61 @@ describe('loadLegacyRule', () => {
       all: [
         { label: 'rum' },
         {
-          any: [
-            '[Aa]hoy',
-            '[Mm]atey',
-            '([AR]a*|Ya+)rrr+!'
-          ]
-        }
-      ]
-    }
+          any: ['[Aa]hoy', '[Mm]atey', '([AR]a*|Ya+)rrr+!'],
+        },
+      ],
+    };
     const got = loadLegacyRule({
       'pirate:caribbean': {
         removeOnMissing: true,
-        expression
-      }
-    })
+        expression,
+      },
+    });
     expect(got).toStrictEqual([
       {
         when: expression,
-        then: [{ addLabel: 'pirate:caribbean' }]
+        then: [{ addLabel: 'pirate:caribbean' }],
       },
       {
         when: { not: expression },
-        then: [{ removeLabel: 'pirate:caribbean' }]
-      }
-    ])
-  })
-})
+        then: [{ removeLabel: 'pirate:caribbean' }],
+      },
+    ]);
+  });
+});
 
 describe('executeRulebook', () => {
   it('invokes onAddLabel when condition matches', async () => {
-    const onAddLabel = vi.fn()
+    const onAddLabel = vi.fn();
     const ctx: Context = {
       body: () => 'a',
       labels: () => [],
       onAddLabel,
       onRemoveLabel: () => {},
-      finish: () => Promise.resolve()
-    }
+      finish: () => Promise.resolve(),
+    };
     const rule: Rule = {
       when: 'a',
-      then: [{ addLabel: 'added' }]
-    }
-    await executeRulebook(ctx, rule)
-    expect(onAddLabel).toHaveBeenCalledWith('added')
-  })
+      then: [{ addLabel: 'added' }],
+    };
+    await executeRulebook(ctx, rule);
+    expect(onAddLabel).toHaveBeenCalledWith('added');
+  });
 
   it('invokes onRemoveLabel when condition matches', async () => {
-    const onRemoveLabel = vi.fn()
+    const onRemoveLabel = vi.fn();
     const ctx: Context = {
       body: () => 'b',
       labels: () => [],
       onAddLabel: () => {},
       onRemoveLabel,
-      finish: () => Promise.resolve()
-    }
+      finish: () => Promise.resolve(),
+    };
     const rule: Rule = {
       when: { not: 'a' },
-      then: [{ removeLabel: 'added' }]
-    }
-    await executeRulebook(ctx, rule)
-    expect(onRemoveLabel).toHaveBeenCalledWith('added')
-  })
-})
+      then: [{ removeLabel: 'added' }],
+    };
+    await executeRulebook(ctx, rule);
+    expect(onRemoveLabel).toHaveBeenCalledWith('added');
+  });
+});
