@@ -19,6 +19,9 @@
       "recommended": true,
       "suspicious": {
         "noThenProperty": "off"
+      },
+      "style": {
+        "noNonNullAssertion": "off"
       }
     }
   },
