@@ -1,26 +1,21 @@
-import type { Expression } from './ghimex-types.js'
+import type { Expression } from './ghimex-types.js';
 
 interface Metadata {
-  id?: string
+  id?: string;
 }
 
-export type Action
-  = { addLabel: string }
-  | { removeLabel: string }
+export type Action = { addLabel: string } | { removeLabel: string };
 
 interface ConditionClause {
-  when: Expression
+  when: Expression;
 }
 
 interface ActionClause {
-  then?: Action[]
+  then?: Action[];
 }
 
-export type Rule
-  = Metadata
-  & ConditionClause
-  & ActionClause
+export type Rule = Metadata & ConditionClause & ActionClause;
 
-type Rulebook = Rule[] | Rule
+type Rulebook = Rule[] | Rule;
 
-export type Schema = Rulebook
+export type Schema = Rulebook;

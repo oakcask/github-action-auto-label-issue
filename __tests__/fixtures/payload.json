@@ -1,13 +1,13 @@
 {
-    "repository": {
-        "owner": {
-            "login": "owner-in-payload"
-        },
-        "name": "repo-in-payload"
+  "repository": {
+    "owner": {
+      "login": "owner-in-payload"
     },
-    "issue": {
-        "node_id": "issueid",
-        "number": 42,
-        "body": "issue body"
-    }
+    "name": "repo-in-payload"
+  },
+  "issue": {
+    "node_id": "issueid",
+    "number": 42,
+    "body": "issue body"
+  }
 }
