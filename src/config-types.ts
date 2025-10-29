@@ -1,4 +1,4 @@
-import { BareExpression, StructuredExpression } from './ghimex-types.js';
+import type { BareExpression, StructuredExpression } from './ghimex-types.js';
 
 type Arm =
   | ({ removeOnMissing?: boolean } & StructuredExpression)

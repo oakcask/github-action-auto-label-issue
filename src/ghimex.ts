@@ -1,4 +1,4 @@
-import {
+import type {
   AllExpression,
   AnyExpression,
   Expression as Exp,

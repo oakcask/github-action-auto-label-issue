@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isMatch, Expression } from '../src/ghimex';
+import { isMatch, type Expression } from '../src/ghimex';
 
 class TestIssue {
   readonly _body: string;

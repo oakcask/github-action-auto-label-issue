@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import type { Rule } from '../src/rulebook-types.js';
 import { executeRulebook, loadLegacyRule, loadRulebook } from '../src/rulebook';
 import type { Expression } from '../src/ghimex-types';
-import { Context } from '../src/context';
+import type { Context } from '../src/context';
 
 describe('loadRulebook', () => {
   it('loads examples/rulebook.yaml', async () => {

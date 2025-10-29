@@ -2,14 +2,14 @@ import fs from 'node:fs/promises';
 import util from 'node:util';
 import * as core from '@actions/core';
 import { Octokit } from '@octokit/action';
-import { WebhookEvent } from '@octokit/webhooks-types';
-import { Parameters, getContext } from './context.js';
+import type { WebhookEvent } from '@octokit/webhooks-types';
+import { type Parameters, getContext } from './context.js';
 import { getConfiguration } from './config.js';
 import {
   executeRulebook,
   loadLegacyRule,
   loadRulebook,
-  Rulebook,
+  type Rulebook,
 } from './rulebook.js';
 
 export async function parseParameters(): Promise<Parameters | undefined> {
