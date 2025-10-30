@@ -32,7 +32,7 @@ importers:
         version: 2.3.2
       '@graphql-codegen/cli':
         specifier: ^5.0.5
-        version: 5.0.7(@types/node@20.19.24)(graphql-sock@1.0.1(graphql@16.8.1))(graphql@16.8.1)(typescript@5.9.2)
+        version: 5.0.7(@types/node@20.19.24)(graphql-sock@1.0.1(graphql@16.8.1))(graphql@16.8.1)(typescript@5.9.3)
       '@graphql-codegen/introspection':
         specifier: ^4.0.3
         version: 4.0.3(graphql@16.8.1)
@@ -50,10 +50,10 @@ importers:
         version: 7.6.1
       '@semantic-release/changelog':
         specifier: ^6.0.3
-        version: 6.0.3(semantic-release@24.2.7(typescript@5.9.2))
+        version: 6.0.3(semantic-release@24.2.7(typescript@5.9.3))
       '@semantic-release/github':
         specifier: ^11.0.0
-        version: 11.0.4(semantic-release@24.2.7(typescript@5.9.2))
+        version: 11.0.4(semantic-release@24.2.7(typescript@5.9.3))
       '@types/js-yaml':
         specifier: ^4.0.9
         version: 4.0.9
@@ -65,13 +65,13 @@ importers:
         version: 0.38.4
       semantic-release:
         specifier: ^24.0.0
-        version: 24.2.7(typescript@5.9.2)
+        version: 24.2.7(typescript@5.9.3)
       semantic-release-tags:
         specifier: ^2.0.0
         version: 2.0.0
       typescript:
         specifier: ^5.4.5
-        version: 5.9.2
+        version: 5.9.3
       typescript-json-schema:
         specifier: ^0.65.1
         version: 0.65.1
@@ -2786,8 +2786,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  typescript@5.9.2:
-    resolution: {integrity: sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A==}
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -3339,7 +3339,7 @@ snapshots:
       graphql: 16.8.1
       tslib: 2.6.3
 
-  '@graphql-codegen/cli@5.0.7(@types/node@20.19.24)(graphql-sock@1.0.1(graphql@16.8.1))(graphql@16.8.1)(typescript@5.9.2)':
+  '@graphql-codegen/cli@5.0.7(@types/node@20.19.24)(graphql-sock@1.0.1(graphql@16.8.1))(graphql@16.8.1)(typescript@5.9.3)':
     dependencies:
       '@babel/generator': 7.27.5
       '@babel/template': 7.27.2
@@ -3359,11 +3359,11 @@ snapshots:
       '@graphql-tools/utils': 10.8.6(graphql@16.8.1)
       '@whatwg-node/fetch': 0.10.8
       chalk: 4.1.2
-      cosmiconfig: 8.3.6(typescript@5.9.2)
+      cosmiconfig: 8.3.6(typescript@5.9.3)
       debounce: 1.2.1
       detect-indent: 6.1.0
       graphql: 16.8.1
-      graphql-config: 5.1.5(@types/node@20.19.24)(graphql@16.8.1)(typescript@5.9.2)
+      graphql-config: 5.1.5(@types/node@20.19.24)(graphql@16.8.1)(typescript@5.9.3)
       inquirer: 8.2.6
       is-glob: 4.0.3
       jiti: 1.21.7
@@ -4013,15 +4013,15 @@ snapshots:
 
   '@sec-ant/readable-stream@0.4.1': {}
 
-  '@semantic-release/changelog@6.0.3(semantic-release@24.2.7(typescript@5.9.2))':
+  '@semantic-release/changelog@6.0.3(semantic-release@24.2.7(typescript@5.9.3))':
     dependencies:
       '@semantic-release/error': 3.0.0
       aggregate-error: 3.1.0
       fs-extra: 11.2.0
       lodash: 4.17.21
-      semantic-release: 24.2.7(typescript@5.9.2)
+      semantic-release: 24.2.7(typescript@5.9.3)
 
-  '@semantic-release/commit-analyzer@13.0.1(semantic-release@24.2.7(typescript@5.9.2))':
+  '@semantic-release/commit-analyzer@13.0.1(semantic-release@24.2.7(typescript@5.9.3))':
     dependencies:
       conventional-changelog-angular: 8.0.0
       conventional-changelog-writer: 8.2.0
@@ -4031,7 +4031,7 @@ snapshots:
       import-from-esm: 2.0.0
       lodash-es: 4.17.21
       micromatch: 4.0.8
-      semantic-release: 24.2.7(typescript@5.9.2)
+      semantic-release: 24.2.7(typescript@5.9.3)
     transitivePeerDependencies:
       - supports-color
 
@@ -4039,7 +4039,7 @@ snapshots:
 
   '@semantic-release/error@4.0.0': {}
 
-  '@semantic-release/github@11.0.4(semantic-release@24.2.7(typescript@5.9.2))':
+  '@semantic-release/github@11.0.4(semantic-release@24.2.7(typescript@5.9.3))':
     dependencies:
       '@octokit/core': 7.0.3
       '@octokit/plugin-paginate-rest': 13.1.1(@octokit/core@7.0.3)
@@ -4056,12 +4056,12 @@ snapshots:
       lodash-es: 4.17.21
       mime: 4.0.7
       p-filter: 4.1.0
-      semantic-release: 24.2.7(typescript@5.9.2)
+      semantic-release: 24.2.7(typescript@5.9.3)
       url-join: 5.0.0
     transitivePeerDependencies:
       - supports-color
 
-  '@semantic-release/npm@12.0.2(semantic-release@24.2.7(typescript@5.9.2))':
+  '@semantic-release/npm@12.0.2(semantic-release@24.2.7(typescript@5.9.3))':
     dependencies:
       '@semantic-release/error': 4.0.0
       aggregate-error: 5.0.0
@@ -4074,11 +4074,11 @@ snapshots:
       rc: 1.2.8
       read-pkg: 9.0.1
       registry-auth-token: 5.1.0
-      semantic-release: 24.2.7(typescript@5.9.2)
+      semantic-release: 24.2.7(typescript@5.9.3)
       semver: 7.7.2
       tempy: 3.1.0
 
-  '@semantic-release/release-notes-generator@14.0.3(semantic-release@24.2.7(typescript@5.9.2))':
+  '@semantic-release/release-notes-generator@14.0.3(semantic-release@24.2.7(typescript@5.9.3))':
     dependencies:
       conventional-changelog-angular: 8.0.0
       conventional-changelog-writer: 8.2.0
@@ -4090,7 +4090,7 @@ snapshots:
       into-stream: 7.0.0
       lodash-es: 4.17.21
       read-package-up: 11.0.0
-      semantic-release: 24.2.7(typescript@5.9.2)
+      semantic-release: 24.2.7(typescript@5.9.3)
     transitivePeerDependencies:
       - supports-color
 
@@ -4484,23 +4484,23 @@ snapshots:
 
   core-util-is@1.0.3: {}
 
-  cosmiconfig@8.3.6(typescript@5.9.2):
+  cosmiconfig@8.3.6(typescript@5.9.3):
     dependencies:
       import-fresh: 3.3.1
       js-yaml: 4.1.0
       parse-json: 5.2.0
       path-type: 4.0.0
     optionalDependencies:
-      typescript: 5.9.2
+      typescript: 5.9.3
 
-  cosmiconfig@9.0.0(typescript@5.9.2):
+  cosmiconfig@9.0.0(typescript@5.9.3):
     dependencies:
       env-paths: 2.2.1
       import-fresh: 3.3.1
       js-yaml: 4.1.0
       parse-json: 5.2.0
     optionalDependencies:
-      typescript: 5.9.2
+      typescript: 5.9.3
 
   create-require@1.1.1: {}
 
@@ -4825,7 +4825,7 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
-  graphql-config@5.1.5(@types/node@20.19.24)(graphql@16.8.1)(typescript@5.9.2):
+  graphql-config@5.1.5(@types/node@20.19.24)(graphql@16.8.1)(typescript@5.9.3):
     dependencies:
       '@graphql-tools/graphql-file-loader': 8.0.20(graphql@16.8.1)
       '@graphql-tools/json-file-loader': 8.0.18(graphql@16.8.1)
@@ -4833,7 +4833,7 @@ snapshots:
       '@graphql-tools/merge': 9.0.24(graphql@16.8.1)
       '@graphql-tools/url-loader': 8.0.31(@types/node@20.19.24)(graphql@16.8.1)
       '@graphql-tools/utils': 10.8.6(graphql@16.8.1)
-      cosmiconfig: 8.3.6(typescript@5.9.2)
+      cosmiconfig: 8.3.6(typescript@5.9.3)
       graphql: 16.8.1
       jiti: 2.4.2
       minimatch: 9.0.5
@@ -5576,15 +5576,15 @@ snapshots:
 
   semantic-release-tags@2.0.0: {}
 
-  semantic-release@24.2.7(typescript@5.9.2):
+  semantic-release@24.2.7(typescript@5.9.3):
     dependencies:
-      '@semantic-release/commit-analyzer': 13.0.1(semantic-release@24.2.7(typescript@5.9.2))
+      '@semantic-release/commit-analyzer': 13.0.1(semantic-release@24.2.7(typescript@5.9.3))
       '@semantic-release/error': 4.0.0
-      '@semantic-release/github': 11.0.4(semantic-release@24.2.7(typescript@5.9.2))
-      '@semantic-release/npm': 12.0.2(semantic-release@24.2.7(typescript@5.9.2))
-      '@semantic-release/release-notes-generator': 14.0.3(semantic-release@24.2.7(typescript@5.9.2))
+      '@semantic-release/github': 11.0.4(semantic-release@24.2.7(typescript@5.9.3))
+      '@semantic-release/npm': 12.0.2(semantic-release@24.2.7(typescript@5.9.3))
+      '@semantic-release/release-notes-generator': 14.0.3(semantic-release@24.2.7(typescript@5.9.3))
       aggregate-error: 5.0.0
-      cosmiconfig: 9.0.0(typescript@5.9.2)
+      cosmiconfig: 9.0.0(typescript@5.9.3)
       debug: 4.4.1
       env-ci: 11.1.1
       execa: 9.6.0
@@ -5886,7 +5886,7 @@ snapshots:
 
   typescript@5.5.4: {}
 
-  typescript@5.9.2: {}
+  typescript@5.9.3: {}
 
   ua-parser-js@1.0.40: {}
 
