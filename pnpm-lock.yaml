@@ -62,7 +62,7 @@ importers:
         version: 20.19.24
       '@vercel/ncc':
         specifier: ^0.38.1
-        version: 0.38.3
+        version: 0.38.4
       semantic-release:
         specifier: ^24.0.0
         version: 24.2.7(typescript@5.9.2)
@@ -988,8 +988,8 @@ packages:
   '@types/ws@8.18.1':
     resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
-  '@vercel/ncc@0.38.3':
-    resolution: {integrity: sha512-rnK6hJBS6mwc+Bkab+PGPs9OiS0i/3kdTO+CkI8V0/VrW3vmz7O2Pxjw/owOlmo6PKEIxRSeZKv/kuL9itnpYA==}
+  '@vercel/ncc@0.38.4':
+    resolution: {integrity: sha512-8LwjnlP39s08C08J5NstzriPvW1SP8Zfpp1BvC2sI35kPeZnHfxVkCwu4/+Wodgnd60UtT1n8K8zw+Mp7J9JmQ==}
     hasBin: true
 
   '@vitest/expect@3.2.4':
@@ -4134,7 +4134,7 @@ snapshots:
     dependencies:
       '@types/node': 20.19.24
 
-  '@vercel/ncc@0.38.3': {}
+  '@vercel/ncc@0.38.4': {}
 
   '@vitest/expect@3.2.4':
     dependencies:
