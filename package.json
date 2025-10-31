@@ -40,5 +40,5 @@
     "js-yaml": "^4.1.0",
     "tunnel": "^0.0.6"
   },
-  "packageManager": "pnpm@10.15.0"
+  "packageManager": "pnpm@10.20.0"
 }
