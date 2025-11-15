@@ -8,28 +8,28 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
           token: ${{ secrets.GITHUB_TOKEN  }}
       - uses:  ./.github/actions/setup-pnpm
       - run: pnpm run graphql-codegen
       - id: gh-token-gen
-        uses: oakcask/gh-token-gen@v3.1.10
+        uses: oakcask/gh-token-gen@3c87b3575883319ffabeaedf8ddc5ced6f67fae1 # v3.1.10
         with:
           app-id: ${{ secrets.TOKEN_GEN_APP_ID }}
           private-key: ${{ secrets.TOKEN_GEN_PRIVATE_KEY }}
-      - uses: int128/update-generated-files-action@v2
+      - uses: int128/update-generated-files-action@d9aac571db84cee6c16fa20190621e9deb2bc575 # v2
         with:
           commit-message: "fix: update graphql types"
           token: ${{ steps.gh-token-gen.outputs.token }}
       - run: pnpm run schema:config
       - run: pnpm run schema:rulebook
-      - uses: int128/update-generated-files-action@v2
+      - uses: int128/update-generated-files-action@d9aac571db84cee6c16fa20190621e9deb2bc575 # v2
         with:
           commit-message: "fix: update json schemas"
           token: ${{ steps.gh-token-gen.outputs.token }}
       - run: pnpm run format:all
-      - uses: int128/update-generated-files-action@v2
+      - uses: int128/update-generated-files-action@d9aac571db84cee6c16fa20190621e9deb2bc575 # v2
         with:
           commit-message: "style: `$ npm run format:all`"
           token: ${{ steps.gh-token-gen.outputs.token }}
@@ -40,7 +40,7 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
           token: ${{ secrets.GITHUB_TOKEN  }}
       - uses:  ./.github/actions/setup-pnpm

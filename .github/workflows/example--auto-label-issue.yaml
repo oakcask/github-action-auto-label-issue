@@ -8,11 +8,11 @@ jobs:
   mark:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
           token: ${{ secrets.GITHUB_TOKEN  }}
           sparse-checkout: examples/config.yaml
-      - uses: oakcask/github-action-auto-label-issue@v2
+      - uses: oakcask/github-action-auto-label-issue@866609b7f6ec88d77047f8b1ccca765efac1fa1c # v2
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           configuration-path: examples/config.yaml
