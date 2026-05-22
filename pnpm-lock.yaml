@@ -9,13 +9,13 @@ importers:
   .:
     dependencies:
       '@actions/core':
-        specifier: ^1.10.1
+        specifier: ^1.11.1
         version: 1.11.1
       '@octokit/action':
-        specifier: ^8.0.0
+        specifier: ^8.0.2
         version: 8.0.2
       '@octokit/graphql':
-        specifier: ^9.0.0
+        specifier: ^9.0.3
         version: 9.0.3
       ajv:
         specifier: ^8.18.0
@@ -31,7 +31,7 @@ importers:
         specifier: 2.3.5
         version: 2.3.5
       '@graphql-codegen/cli':
-        specifier: ^5.0.5
+        specifier: ^5.0.7
         version: 5.0.7(@types/node@20.19.24)(graphql-sock@1.0.1(graphql@16.8.1))(graphql@16.8.1)(typescript@5.9.3)
       '@graphql-codegen/introspection':
         specifier: ^4.0.3
@@ -40,10 +40,10 @@ importers:
         specifier: ^4.1.6
         version: 4.1.6(graphql@16.8.1)
       '@graphql-codegen/typescript-operations':
-        specifier: ^4.6.0
+        specifier: ^4.6.1
         version: 4.6.1(graphql-sock@1.0.1(graphql@16.8.1))(graphql@16.8.1)
       '@octokit/types':
-        specifier: ^14.0.0
+        specifier: ^14.1.0
         version: 14.1.0
       '@octokit/webhooks-types':
         specifier: ^7.6.1
@@ -52,31 +52,31 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3(semantic-release@24.2.9(typescript@5.9.3))
       '@semantic-release/github':
-        specifier: ^11.0.0
+        specifier: ^11.0.6
         version: 11.0.6(semantic-release@24.2.9(typescript@5.9.3))
       '@types/js-yaml':
         specifier: ^4.0.9
         version: 4.0.9
       '@types/node':
-        specifier: ^20.12.7
+        specifier: ^20.19.24
         version: 20.19.24
       '@vercel/ncc':
-        specifier: ^0.38.1
+        specifier: ^0.38.4
         version: 0.38.4
       semantic-release:
-        specifier: ^24.0.0
+        specifier: ^24.2.9
         version: 24.2.9(typescript@5.9.3)
       semantic-release-tags:
         specifier: ^2.0.0
         version: 2.0.0
       typescript:
-        specifier: ^5.4.5
+        specifier: ^5.9.3
         version: 5.9.3
       typescript-json-schema:
         specifier: ^0.65.1
         version: 0.65.1
       vitest:
-        specifier: ^3.0.4
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.24)(jiti@2.4.2)(yaml@2.8.0)
 
 packages:
@@ -1679,8 +1679,8 @@ packages:
     resolution: {integrity: sha512-59LZHPdGZVh695Ud9lRzPBVTtlX9ZCV150Er2W43ro37wVof0ctenSaskPPjN7lVTIN8mSZt8PHUNKZuNQUuxw==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
 
-  handlebars@4.7.8:
-    resolution: {integrity: sha512-vafaFqs8MZkRrSX7sFVUdo3ap/eNiLnb4IakshzvP56X5Nr1iGKAIqdX6tMlm6HcNRIkr6AxO5jFEoJzzpT8aQ==}
+  handlebars@4.7.9:
+    resolution: {integrity: sha512-4E71E0rpOaQuJR2A3xDZ+GM1HyWYv1clR58tC8emQNeQe3RH7MAzSbat+V0wG78LQBo6m6bzSG/L4pBuCsgnUQ==}
     engines: {node: '>=0.4.7'}
     hasBin: true
 
@@ -4480,7 +4480,7 @@ snapshots:
   conventional-changelog-writer@8.2.0:
     dependencies:
       conventional-commits-filter: 5.0.0
-      handlebars: 4.7.8
+      handlebars: 4.7.9
       meow: 13.2.0
       semver: 7.7.3
 
@@ -4885,7 +4885,7 @@ snapshots:
 
   graphql@16.8.1: {}
 
-  handlebars@4.7.8:
+  handlebars@4.7.9:
     dependencies:
       minimist: 1.2.8
       neo-async: 2.6.2
