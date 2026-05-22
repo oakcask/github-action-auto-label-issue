@@ -9,13 +9,13 @@ importers:
   .:
     dependencies:
       '@actions/core':
-        specifier: ^1.10.1
+        specifier: ^1.11.1
         version: 1.11.1
       '@octokit/action':
-        specifier: ^8.0.0
+        specifier: ^8.0.2
         version: 8.0.2
       '@octokit/graphql':
-        specifier: ^9.0.0
+        specifier: ^9.0.3
         version: 9.0.3
       ajv:
         specifier: ^8.18.0
@@ -31,7 +31,7 @@ importers:
         specifier: 2.3.5
         version: 2.3.5
       '@graphql-codegen/cli':
-        specifier: ^5.0.5
+        specifier: ^5.0.7
         version: 5.0.7(@types/node@20.19.24)(graphql-sock@1.0.1(graphql@16.8.1))(graphql@16.8.1)(typescript@5.9.3)
       '@graphql-codegen/introspection':
         specifier: ^4.0.3
@@ -40,10 +40,10 @@ importers:
         specifier: ^4.1.6
         version: 4.1.6(graphql@16.8.1)
       '@graphql-codegen/typescript-operations':
-        specifier: ^4.6.0
+        specifier: ^4.6.1
         version: 4.6.1(graphql-sock@1.0.1(graphql@16.8.1))(graphql@16.8.1)
       '@octokit/types':
-        specifier: ^14.0.0
+        specifier: ^14.1.0
         version: 14.1.0
       '@octokit/webhooks-types':
         specifier: ^7.6.1
@@ -52,31 +52,31 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3(semantic-release@24.2.9(typescript@5.9.3))
       '@semantic-release/github':
-        specifier: ^11.0.0
+        specifier: ^11.0.6
         version: 11.0.6(semantic-release@24.2.9(typescript@5.9.3))
       '@types/js-yaml':
         specifier: ^4.0.9
         version: 4.0.9
       '@types/node':
-        specifier: ^20.12.7
+        specifier: ^20.19.24
         version: 20.19.24
       '@vercel/ncc':
-        specifier: ^0.38.1
+        specifier: ^0.38.4
         version: 0.38.4
       semantic-release:
-        specifier: ^24.0.0
+        specifier: ^24.2.9
         version: 24.2.9(typescript@5.9.3)
       semantic-release-tags:
         specifier: ^2.0.0
         version: 2.0.0
       typescript:
-        specifier: ^5.4.5
+        specifier: ^5.9.3
         version: 5.9.3
       typescript-json-schema:
         specifier: ^0.65.1
         version: 0.65.1
       vitest:
-        specifier: ^3.0.4
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.24)(jiti@2.4.2)(yaml@2.8.0)
 
 packages:
@@ -2048,8 +2048,8 @@ packages:
   mz@2.7.0:
     resolution: {integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==}
 
-  nanoid@3.3.11:
-    resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
+  nanoid@3.3.12:
+    resolution: {integrity: sha512-ZB9RH/39qpq5Vu6Y+NmUaFhQR6pp+M2Xt76XBnEwDaGcVAqhlvxrl3B2bKS5D3NH3QR76v3aSrKaF/Kiy7lEtQ==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
@@ -2349,8 +2349,8 @@ packages:
     resolution: {integrity: sha512-C+VUP+8jis7EsQZIhDYmS5qlNtjv2yP4SNtjXK9AP1ZcTRlnSfuumaTnRfYZnYgUUYVIKqL0fRvmUGDV2fmp6g==}
     engines: {node: '>=4'}
 
-  postcss@8.5.6:
-    resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
+  postcss@8.5.15:
+    resolution: {integrity: sha512-FfR8sjd4em2T6fb3I2MwAJU7HWVMr9zba+enmQeeWFfCbm+UOC/0X4DS8XtpUTMwWMGbjKYP7xjfNekzyGmB3A==}
     engines: {node: ^10 || ^12 || >=14}
 
   pretty-ms@9.3.0:
@@ -5186,7 +5186,7 @@ snapshots:
       object-assign: 4.1.1
       thenify-all: 1.6.0
 
-  nanoid@3.3.11: {}
+  nanoid@3.3.12: {}
 
   neo-async@2.6.2: {}
 
@@ -5391,9 +5391,9 @@ snapshots:
       find-up: 2.1.0
       load-json-file: 4.0.0
 
-  postcss@8.5.6:
+  postcss@8.5.15:
     dependencies:
-      nanoid: 3.3.11
+      nanoid: 3.3.12
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
@@ -5929,7 +5929,7 @@ snapshots:
       esbuild: 0.27.7
       fdir: 6.5.0(picomatch@4.0.4)
       picomatch: 4.0.4
-      postcss: 8.5.6
+      postcss: 8.5.15
       rollup: 4.44.2
       tinyglobby: 0.2.16
     optionalDependencies:
