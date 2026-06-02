@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { type Expression, isMatch } from '../src/ghimex';
+import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
+import { type Expression, isMatch } from './ghimex.js';
 
 class TestIssue {
   readonly _body: string;
@@ -30,7 +31,6 @@ describe('isMatch', () => {
     [{ body: 'alice' }, ['a', 'l', 'i', 'c', 'e'], true],
     [{ body: 'alice' }, ['a', 'l', 'i', 'k', 'e'], false],
     [{ body: 'alice' }, { any: ['a', 'b'] }, true],
-
     [
       { body: 'alice', labels: ['foo', 'bar'] },
       { any: [{ label: 'foo' }, { label: 'bar' }] },
@@ -46,7 +46,6 @@ describe('isMatch', () => {
       { any: [{ label: 'foo' }, { label: 'bar' }] },
       true,
     ],
-
     [
       { body: 'alice', labels: ['foo', 'bar'] },
       { all: [{ label: 'foo' }, { label: 'bar' }] },
@@ -77,7 +76,6 @@ describe('isMatch', () => {
       [{ label: 'foo' }, { label: 'bar' }],
       false,
     ],
-
     [{ body: 'alice', labels: ['foo'] }, ['alice', { label: 'foo' }], true],
     [
       { body: 'alice', labels: ['foo'] },
@@ -89,19 +87,18 @@ describe('isMatch', () => {
       { any: ['alice', { label: 'foo' }] },
       false,
     ],
-
     [{ body: '', labels: ['foo:a'] }, { matchLabel: 'foo:a.*' }, true],
     [{ body: '', labels: ['foo:ab'] }, { matchLabel: 'foo:a.*' }, true],
     [{ body: '', labels: ['foo:bb'] }, { matchLabel: 'foo:a.*' }, false],
-
     [{ body: '', labels: ['foo'] }, { not: { matchLabel: 'foo' } }, false],
     [{ body: '', labels: ['foo'] }, { not: { matchLabel: 'bar' } }, true],
   ];
 
-  it.each(testCases)(
-    'for given document %j and expression %j, returns %p',
-    async (doc, exp, outcome) => {
-      expect(isMatch(new TestIssue(doc), exp)).toBe(outcome);
-    },
-  );
+  for (const [doc, exp, outcome] of testCases) {
+    it(`for given document ${JSON.stringify(doc)} and expression ${JSON.stringify(
+      exp,
+    )}, returns ${outcome}`, () => {
+      assert.equal(isMatch(new TestIssue(doc), exp), outcome);
+    });
+  }
 });

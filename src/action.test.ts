@@ -1,59 +1,57 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { parseParameters, parseRulebook } from '../src/action';
-import { getConfiguration } from '../src/config';
-import { loadLegacyRule } from '../src/rulebook';
+import assert from 'node:assert/strict';
+import { beforeEach, describe, it } from 'node:test';
+import { parseParameters, parseRulebook } from './action.js';
+import { getConfiguration } from './config.js';
+import { loadLegacyRule } from './rulebook.js';
 
 describe('parseParameters', () => {
   beforeEach(() => {
     process.env.GITHUB_REPOSITORY = 'foo/bar';
-    process.env.GITHUB_EVENT_PATH = '__tests__/fixtures/payload.json';
+    process.env.GITHUB_EVENT_PATH = 'src/fixtures/payload.json';
   });
 
   it('takes owner/repo from env', async () => {
     const params = await parseParameters();
-    expect(params?.owner).toEqual('foo');
-    expect(params?.repo).toEqual('bar');
+    assert.equal(params?.owner, 'foo');
+    assert.equal(params?.repo, 'bar');
   });
 
   it('takes owner/repo from payload instead if the env is empty', async () => {
     delete process.env.GITHUB_REPOSITORY;
     const params = await parseParameters();
-    expect(params?.owner).toEqual('owner-in-payload');
-    expect(params?.repo).toEqual('repo-in-payload');
+    assert.equal(params?.owner, 'owner-in-payload');
+    assert.equal(params?.repo, 'repo-in-payload');
   });
 
   it('takes issue number and body from payload', async () => {
     const params = (await parseParameters())!;
-    expect('issue' in params && params.issue.id).toEqual('issueid');
-    expect('issue' in params && params.issue.number).toEqual(42);
-    expect('issue' in params && params.issue.body).toEqual('issue body');
+    assert.equal('issue' in params && params.issue.id, 'issueid');
+    assert.equal('issue' in params && params.issue.number, 42);
+    assert.equal('issue' in params && params.issue.body, 'issue body');
   });
 
-  describe('when the payload withoout a issue', async () => {
+  describe('when the payload without an issue', () => {
     beforeEach(() => {
-      process.env.GITHUB_EVENT_PATH =
-        '__tests__/fixtures/payload.no-issue.json';
+      process.env.GITHUB_EVENT_PATH = 'src/fixtures/payload.no-issue.json';
     });
 
     it('is undefined', async () => {
       const params = await parseParameters();
-      expect(params).toBeUndefined();
+      assert.equal(params, undefined);
     });
   });
 
   describe('when the payload includes pull_request', () => {
     beforeEach(() => {
-      process.env.GITHUB_EVENT_PATH =
-        '__tests__/fixtures/payload.pull_request.json';
+      process.env.GITHUB_EVENT_PATH = 'src/fixtures/payload.pull_request.json';
     });
 
     it('takes pull request number and body from payload', async () => {
       const params = (await parseParameters())!;
-      expect('pullRequest' in params && params.pullRequest.id).toEqual('prid');
-      expect('pullRequest' in params && params.pullRequest.number).toEqual(
-        4242,
-      );
-      expect('pullRequest' in params && params.pullRequest.body).toEqual(
+      assert.equal('pullRequest' in params && params.pullRequest.id, 'prid');
+      assert.equal('pullRequest' in params && params.pullRequest.number, 4242);
+      assert.equal(
+        'pullRequest' in params && params.pullRequest.body,
         'pr body',
       );
     });
@@ -75,8 +73,12 @@ describe('parseRulebook', () => {
 
   describe('when rulebook is given', () => {
     it('loads rulebook', async () => {
-      await expect(parseRulebook()).resolves.toMatchObject([
-        { id: 'inline-rulebook' },
+      assert.deepEqual(await parseRulebook(), [
+        {
+          id: 'inline-rulebook',
+          when: { label: 'foo' },
+          then: [{ removeLabel: 'foo' }],
+        },
       ]);
     });
   });
@@ -85,11 +87,17 @@ describe('parseRulebook', () => {
     beforeEach(() => {
       delete process.env.INPUT_RULEBOOK;
     });
+
     it('loads rulebook', async () => {
-      await expect(parseRulebook()).resolves.toMatchObject([
-        { id: 'detect-caribbean-pirate-in-issue' },
-        { id: 'reverse-detect-caribbean-pirate-in-issue' },
-      ]);
+      const rulebook = await parseRulebook();
+      assert.ok(Array.isArray(rulebook));
+      assert.deepEqual(
+        rulebook.map((rule) => rule.id),
+        [
+          'detect-caribbean-pirate-in-issue',
+          'reverse-detect-caribbean-pirate-in-issue',
+        ],
+      );
     });
   });
 
@@ -98,8 +106,10 @@ describe('parseRulebook', () => {
       delete process.env.INPUT_RULEBOOK;
       delete process.env['INPUT_RULEBOOK-PATH'];
     });
+
     it('loads rulebook', async () => {
-      await expect(parseRulebook()).resolves.toStrictEqual(
+      assert.deepEqual(
+        await parseRulebook(),
         loadLegacyRule(await getConfiguration('examples/config.yaml')),
       );
     });
@@ -113,7 +123,7 @@ describe('parseRulebook', () => {
     });
 
     it('fails', async () => {
-      await expect(parseRulebook()).rejects.toThrow();
+      await assert.rejects(parseRulebook());
     });
   });
 });
