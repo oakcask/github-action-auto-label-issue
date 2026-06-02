@@ -1,14 +1,15 @@
-import { describe, expect, it, vi } from 'vitest';
-import type { Context } from '../src/context';
-import type { Expression } from '../src/ghimex-types';
-import { executeRulebook, loadLegacyRule, loadRulebook } from '../src/rulebook';
-import type { Rule } from '../src/rulebook-types.js';
+import assert from 'node:assert/strict';
+import { describe, it, mock } from 'node:test';
+import type { Context } from './context.js';
+import type { Expression } from './ghimex-types.js';
+import { executeRulebook, loadLegacyRule, loadRulebook } from './rulebook.js';
+import type { Rule } from './rulebook-types.js';
 
 describe('loadRulebook', () => {
   it('loads examples/rulebook.yaml', async () => {
     const rulebook = await loadRulebook({ path: 'examples/rulebook.yaml' });
-    expect(rulebook).not.toBeUndefined();
-    expect(rulebook).toStrictEqual([
+    assert.notEqual(rulebook, undefined);
+    assert.deepEqual(rulebook, [
       {
         id: 'detect-caribbean-pirate-in-issue',
         when: [
@@ -59,7 +60,7 @@ describe('loadLegacyRule', () => {
         expression,
       },
     });
-    expect(got).toStrictEqual([
+    assert.deepEqual(got, [
       {
         when: expression,
         then: [{ addLabel: 'pirate:caribbean' }],
@@ -74,7 +75,7 @@ describe('loadLegacyRule', () => {
 
 describe('executeRulebook', () => {
   it('invokes onAddLabel when condition matches', async () => {
-    const onAddLabel = vi.fn();
+    const onAddLabel = mock.fn();
     const ctx: Context = {
       body: () => 'a',
       labels: () => [],
@@ -87,11 +88,14 @@ describe('executeRulebook', () => {
       then: [{ addLabel: 'added' }],
     };
     await executeRulebook(ctx, rule);
-    expect(onAddLabel).toHaveBeenCalledWith('added');
+    assert.deepEqual(
+      onAddLabel.mock.calls.map((call) => call.arguments),
+      [['added']],
+    );
   });
 
   it('invokes onRemoveLabel when condition matches', async () => {
-    const onRemoveLabel = vi.fn();
+    const onRemoveLabel = mock.fn();
     const ctx: Context = {
       body: () => 'b',
       labels: () => [],
@@ -104,6 +108,9 @@ describe('executeRulebook', () => {
       then: [{ removeLabel: 'added' }],
     };
     await executeRulebook(ctx, rule);
-    expect(onRemoveLabel).toHaveBeenCalledWith('added');
+    assert.deepEqual(
+      onRemoveLabel.mock.calls.map((call) => call.arguments),
+      [['added']],
+    );
   });
 });

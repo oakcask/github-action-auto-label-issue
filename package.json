@@ -3,7 +3,7 @@
   "scripts": {
     "build": "ncc build -m src/main.ts",
     "build:debug": "ncc build -s src/main.ts",
-    "test": "vitest --run",
+    "test": "tsc && node --test lib/*.test.js",
     "format:all": "biome check --write",
     "release": "semantic-release",
     "graphql-codegen": "graphql-codegen --config graphql-codegen.yml",
