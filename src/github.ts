@@ -11,11 +11,7 @@ import type {
   UpdateLabelsMutationVariables,
 } from './generated/graphql.js';
 
-type Request = {
-  __typename?: 'Query' | 'Mutation';
-};
-
-function req<T extends Request>(
+function req<T>(
   gh: Octokit,
   query: string,
   variables: RequestParameters,
@@ -45,7 +41,7 @@ function queryNextIssueLabels(
   gh: Octokit,
   variables: NextIssueLabelsQueryVariables,
 ): Promise<NextIssueLabelsQuery> {
-  return req(gh, nextIssueLabelsQuery, variables);
+  return req<NextIssueLabelsQuery>(gh, nextIssueLabelsQuery, variables);
 }
 
 const nextPullRequestLabelsQuery = /* GraphQL */ `
@@ -70,7 +66,11 @@ function queryNextPullRequestLabels(
   gh: Octokit,
   variables: NextPullRequestLabelsQueryVariables,
 ): Promise<NextPullRequestLabelsQuery> {
-  return req(gh, nextPullRequestLabelsQuery, variables);
+  return req<NextPullRequestLabelsQuery>(
+    gh,
+    nextPullRequestLabelsQuery,
+    variables,
+  );
 }
 
 type GetLabelsRequest = {
@@ -157,7 +157,11 @@ function queryNextRepositoryLabels(
   gh: Octokit,
   variables: NextRepositoryLabelsQueryVariables,
 ): Promise<NextRepositoryLabelsQuery> {
-  return req(gh, nextRepositoryLabelsQuery, variables);
+  return req<NextRepositoryLabelsQuery>(
+    gh,
+    nextRepositoryLabelsQuery,
+    variables,
+  );
 }
 
 interface RepoLabelIdsByName {
@@ -220,5 +224,5 @@ export function updateLabels(
   gh: Octokit,
   variables: UpdateLabelsMutationVariables,
 ): Promise<UpdateLabelsMutation> {
-  return req(gh, updateLabelsMutation, variables);
+  return req<UpdateLabelsMutation>(gh, updateLabelsMutation, variables);
 }
