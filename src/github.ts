@@ -66,7 +66,11 @@ function queryNextPullRequestLabels(
   gh: Octokit,
   variables: NextPullRequestLabelsQueryVariables,
 ): Promise<NextPullRequestLabelsQuery> {
-  return req<NextPullRequestLabelsQuery>(gh, nextPullRequestLabelsQuery, variables);
+  return req<NextPullRequestLabelsQuery>(
+    gh,
+    nextPullRequestLabelsQuery,
+    variables,
+  );
 }
 
 type GetLabelsRequest = {
@@ -153,7 +157,11 @@ function queryNextRepositoryLabels(
   gh: Octokit,
   variables: NextRepositoryLabelsQueryVariables,
 ): Promise<NextRepositoryLabelsQuery> {
-  return req<NextRepositoryLabelsQuery>(gh, nextRepositoryLabelsQuery, variables);
+  return req<NextRepositoryLabelsQuery>(
+    gh,
+    nextRepositoryLabelsQuery,
+    variables,
+  );
 }
 
 interface RepoLabelIdsByName {
