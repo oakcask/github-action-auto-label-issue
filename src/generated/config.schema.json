@@ -90,7 +90,7 @@
                             "type": "object"
                         },
                         {
-                            "$ref": "#/definitions/AnyExpression<Expression>"
+                            "$ref": "#/definitions/AnyExpression%3CExpression%3E"
                         }
                     ]
                 },
@@ -105,7 +105,7 @@
                             "type": "object"
                         },
                         {
-                            "$ref": "#/definitions/AllExpression<Expression>"
+                            "$ref": "#/definitions/AllExpression%3CExpression%3E"
                         }
                     ]
                 },
@@ -120,7 +120,7 @@
                             "type": "object"
                         },
                         {
-                            "$ref": "#/definitions/NotExpression<Expression>"
+                            "$ref": "#/definitions/NotExpression%3CExpression%3E"
                         }
                     ]
                 },
@@ -141,13 +141,13 @@
                     "$ref": "#/definitions/PatternExpression"
                 },
                 {
-                    "$ref": "#/definitions/AnyExpression<Expression>"
+                    "$ref": "#/definitions/AnyExpression%3CExpression%3E"
                 },
                 {
-                    "$ref": "#/definitions/AllExpression<Expression>"
+                    "$ref": "#/definitions/AllExpression%3CExpression%3E"
                 },
                 {
-                    "$ref": "#/definitions/NotExpression<Expression>"
+                    "$ref": "#/definitions/NotExpression%3CExpression%3E"
                 },
                 {
                     "items": {
