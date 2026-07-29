@@ -29,7 +29,7 @@
     "semantic-release": "^25.0.8",
     "semantic-release-tags": "^2.0.0",
     "typescript": "^5.9.3",
-    "typescript-json-schema": "^0.67.4"
+    "typescript-json-schema": "^0.68.0"
   },
   "dependencies": {
     "@actions/core": "^3.0.1",
