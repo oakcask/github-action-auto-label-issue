@@ -68,8 +68,8 @@ importers:
         specifier: ^24.0.0
         version: 24.12.4
       '@vercel/ncc':
-        specifier: ^0.38.4
-        version: 0.38.4
+        specifier: ^0.44.1
+        version: 0.44.1
       semantic-release:
         specifier: ^25.0.8
         version: 25.0.8(typescript@5.9.3)
@@ -878,8 +878,8 @@ packages:
   '@types/ws@8.18.1':
     resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
-  '@vercel/ncc@0.38.4':
-    resolution: {integrity: sha512-8LwjnlP39s08C08J5NstzriPvW1SP8Zfpp1BvC2sI35kPeZnHfxVkCwu4/+Wodgnd60UtT1n8K8zw+Mp7J9JmQ==}
+  '@vercel/ncc@0.44.1':
+    resolution: {integrity: sha512-cUjIE5P2YY1n+Kt9rFIazMMpGoPn1Fic04rOmTkElMkiDP5oszGfERMpo2shVkFKDL7rVppdM2pqJKC59shQWQ==}
     hasBin: true
 
   '@whatwg-node/disposablestack@0.0.6':
@@ -3569,7 +3569,7 @@ snapshots:
     dependencies:
       '@types/node': 24.12.4
 
-  '@vercel/ncc@0.38.4': {}
+  '@vercel/ncc@0.44.1': {}
 
   '@whatwg-node/disposablestack@0.0.6':
     dependencies:
