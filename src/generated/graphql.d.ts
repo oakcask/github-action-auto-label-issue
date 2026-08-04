@@ -4705,6 +4705,8 @@ export type CreateProjectV2StatusUpdatePayload = {
 export type CreateProjectV2ViewInput = {
   /** A unique identifier for the client performing the mutation. */
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  /** The configuration for the view. */
+  configuration?: InputMaybe<ProjectV2ViewConfigurationInput>;
   /** The layout of the view. */
   layout: ProjectV2ViewLayout;
   /** The name of the view. */
@@ -13376,7 +13378,9 @@ export enum MigrationSourceType {
   /** A Bitbucket Server migration source. */
   BitbucketServer = 'BITBUCKET_SERVER',
   /** A GitHub Migration API source. */
-  GithubArchive = 'GITHUB_ARCHIVE'
+  GithubArchive = 'GITHUB_ARCHIVE',
+  /** A GitLab migration source. */
+  Gitlab = 'GITLAB'
 }
 
 /** The GitHub Enterprise Importer (GEI) migration state. */
@@ -23155,6 +23159,8 @@ export enum ProjectV2StatusUpdateStatus {
 /** A view within a ProjectV2. */
 export type ProjectV2View = Node & {
   __typename?: 'ProjectV2View';
+  /** The view's configuration. */
+  configuration: ProjectV2ViewConfiguration;
   /** Identifies the date and time when the object was created. */
   createdAt: Scalars['DateTime']['output'];
   /**
@@ -23284,6 +23290,28 @@ export type ProjectV2ViewVisibleFieldsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<ProjectV2FieldOrder>;
+};
+
+/** Configuration for a ProjectV2 view. */
+export type ProjectV2ViewConfiguration = {
+  __typename?: 'ProjectV2ViewConfiguration';
+  /** The fields visible in the view, in configured order. */
+  visibleFields: ProjectV2FieldConfigurationConnection;
+};
+
+
+/** Configuration for a ProjectV2 view. */
+export type ProjectV2ViewConfigurationVisibleFieldsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** Configuration for a ProjectV2 view. */
+export type ProjectV2ViewConfigurationInput = {
+  /** The ordered IDs of the fields visible in the view. */
+  visibleFieldIds?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 /** The connection type for ProjectV2View. */
@@ -36910,6 +36938,8 @@ export type UpdateProjectV2StatusUpdatePayload = {
 export type UpdateProjectV2ViewInput = {
   /** A unique identifier for the client performing the mutation. */
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  /** The new configuration for the view. */
+  configuration?: InputMaybe<ProjectV2ViewConfigurationInput>;
   /** The new filter for the view. */
   filter?: InputMaybe<Scalars['String']['input']>;
   /** The new layout for the view. */
