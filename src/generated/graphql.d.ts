@@ -7341,6 +7341,8 @@ export type Enterprise = Node & {
   enterpriseTeams: EnterpriseTeamConnection;
   /** The Node ID of the Enterprise object */
   id: Scalars['ID']['output'];
+  /** Innersource security vulnerabilities scoped to this enterprise. */
+  innersourceVulnerabilities: SecurityVulnerabilityConnection;
   /** The location of the enterprise. */
   location?: Maybe<Scalars['String']['output']>;
   /** A list of users who are members of this enterprise. */
@@ -7405,6 +7407,19 @@ export type EnterpriseEnterpriseTeamsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<EnterpriseTeamOrder>;
   query?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+/** An account to manage multiple organizations with consolidated policy and billing. */
+export type EnterpriseInnersourceVulnerabilitiesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  ecosystem?: InputMaybe<SecurityAdvisoryEcosystem>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SecurityVulnerabilityOrder>;
+  package?: InputMaybe<Scalars['String']['input']>;
+  severities?: InputMaybe<Array<SecurityAdvisorySeverity>>;
 };
 
 
@@ -10440,6 +10455,7 @@ export type IssueBlockingArgs = {
 export type IssueClosedByPullRequestsReferencesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
+  excludeUserLinked?: InputMaybe<Scalars['Boolean']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   includeClosedPrs?: InputMaybe<Scalars['Boolean']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
@@ -19302,6 +19318,8 @@ export type Organization = Actor & MemberStatusable & Node & PackageOwner & Prof
   hasSponsorsListing: Scalars['Boolean']['output'];
   /** The Node ID of the Organization object */
   id: Scalars['ID']['output'];
+  /** Innersource security vulnerabilities scoped to this organization. */
+  innersourceVulnerabilities: SecurityVulnerabilityConnection;
   /** The interaction ability settings for this organization. */
   interactionAbility?: Maybe<RepositoryInteractionAbility>;
   /** The setting value for whether the organization has an IP allow list enabled. */
@@ -19528,6 +19546,19 @@ export type OrganizationEnterpriseOwnersArgs = {
   orderBy?: InputMaybe<OrgEnterpriseOwnerOrder>;
   organizationRole?: InputMaybe<RoleInOrganization>;
   query?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+/** An account on GitHub, with one or more owners, that has repositories, members and teams. */
+export type OrganizationInnersourceVulnerabilitiesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  ecosystem?: InputMaybe<SecurityAdvisoryEcosystem>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SecurityVulnerabilityOrder>;
+  package?: InputMaybe<Scalars['String']['input']>;
+  severities?: InputMaybe<Array<SecurityAdvisorySeverity>>;
 };
 
 
@@ -23507,9 +23538,7 @@ export enum ProofOfPresenceRequirement {
   /** Proof of presence is not required. */
   NoPolicy = 'NO_POLICY',
   /** Members must complete a fresh re-authentication against the enterprise identity provider. */
-  Reauth = 'REAUTH',
-  /** Members must satisfy a phishing-resistant security key re-authentication (Microsoft Entra only). */
-  SecurityKey = 'SECURITY_KEY'
+  Reauth = 'REAUTH'
 }
 
 /** A property that must match */
@@ -23869,6 +23898,7 @@ export type PullRequestAssigneesArgs = {
 export type PullRequestClosingIssuesReferencesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
+  excludeUserLinked?: InputMaybe<Scalars['Boolean']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<IssueOrder>;
