@@ -12,7 +12,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN  }}
           sparse-checkout: examples/config.yaml
-      - uses: oakcask/github-action-auto-label-issue@7dac9d1ae94a47e3460b3ac051624cd0a53aece8 # v2
+      - uses: oakcask/github-action-auto-label-issue@39926ba115407de772a01473104dc4eb29275878 # v2
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           configuration-path: examples/config.yaml
