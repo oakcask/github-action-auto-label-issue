@@ -14,7 +14,7 @@
   "license": "MIT",
   "type": "module",
   "devDependencies": {
-    "@biomejs/biome": "2.5.13",
+    "@biomejs/biome": "2.5.14",
     "@graphql-codegen/cli": "^7.4.1",
     "@graphql-codegen/introspection": "^6.1.0",
     "@graphql-codegen/typescript": "^6.1.0",
