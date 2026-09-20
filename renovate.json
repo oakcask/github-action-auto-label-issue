@@ -6,6 +6,11 @@
   "prCreation": "immediate",
   "packageRules": [
     {
+      "matchDatasources": ["npm"],
+      "matchDepNames": ["renovate"],
+      "schedule": ["* * * * 0"]
+    },
+    {
       "matchUpdateTypes": ["patch", "minor"],
       "automerge": true
     },
