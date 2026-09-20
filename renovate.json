@@ -4,6 +4,11 @@
   "prConcurrentLimit": 1,
   "packageRules": [
     {
+      "matchDatasources": ["npm"],
+      "matchDepNames": ["renovate"],
+      "schedule": ["* * * * 0"]
+    },
+    {
       "matchUpdateTypes": ["patch", "minor"],
       "automerge": true
     },
