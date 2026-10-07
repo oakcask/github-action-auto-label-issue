@@ -2673,6 +2673,43 @@ export type ClosedEvent = Node & UniformResourceLocatable & {
 /** The object which triggered a `ClosedEvent`. */
 export type Closer = Commit | ProjectV2 | PullRequest;
 
+/**
+ * Enforce minimum line coverage thresholds on pull requests. When configured,
+ * uploaded coverage data must meet the specified criteria before changes can be merged.
+ */
+export type CodeCoverageParameters = {
+  __typename?: 'CodeCoverageParameters';
+  /**
+   * The maximum percentage points that line coverage may drop relative to the
+   * default branch. Pull requests that reduce line coverage by more than this
+   * amount will be blocked.
+   */
+  maxCoverageDrop?: Maybe<Scalars['Float']['output']>;
+  /**
+   * The absolute minimum line coverage percentage required. Pull requests with
+   * line coverage below this threshold will be blocked.
+   */
+  minimumCoverage?: Maybe<Scalars['Float']['output']>;
+};
+
+/**
+ * Enforce minimum line coverage thresholds on pull requests. When configured,
+ * uploaded coverage data must meet the specified criteria before changes can be merged.
+ */
+export type CodeCoverageParametersInput = {
+  /**
+   * The maximum percentage points that line coverage may drop relative to the
+   * default branch. Pull requests that reduce line coverage by more than this
+   * amount will be blocked.
+   */
+  maxCoverageDrop?: InputMaybe<Scalars['Float']['input']>;
+  /**
+   * The absolute minimum line coverage percentage required. Pull requests with
+   * line coverage below this threshold will be blocked.
+   */
+  minimumCoverage?: InputMaybe<Scalars['Float']['input']>;
+};
+
 /** The Code of Conduct for a repository */
 export type CodeOfConduct = Node & {
   __typename?: 'CodeOfConduct';
@@ -2689,6 +2726,39 @@ export type CodeOfConduct = Node & {
   /** The HTTP URL for this Code of Conduct */
   url?: Maybe<Scalars['URI']['output']>;
 };
+
+/**
+ * Choose which severity levels of code quality results should block pull request
+ * merges. When configured, a code quality analysis must be done on the pull
+ * request before the changes can be merged.
+ */
+export type CodeQualityParameters = {
+  __typename?: 'CodeQualityParameters';
+  /** The lowest severity level at which code quality reviews need to be resolved before commits can be merged. */
+  severity: CodeQualitySeverity;
+};
+
+/**
+ * Choose which severity levels of code quality results should block pull request
+ * merges. When configured, a code quality analysis must be done on the pull
+ * request before the changes can be merged.
+ */
+export type CodeQualityParametersInput = {
+  /** The lowest severity level at which code quality reviews need to be resolved before commits can be merged. */
+  severity: CodeQualitySeverity;
+};
+
+/** The lowest severity level at which code quality reviews need to be resolved before commits can be merged. */
+export enum CodeQualitySeverity {
+  /** All */
+  All = 'ALL',
+  /** Errors */
+  Errors = 'ERRORS',
+  /** Notes and higher */
+  Notes = 'NOTES',
+  /** Warnings and higher */
+  Warnings = 'WARNINGS'
+}
 
 /**
  * Choose which tools must provide code scanning results before the reference is
@@ -10302,12 +10372,6 @@ export type Issue = Assignable & Closable & Comment & Deletable & Labelable & Lo
   duplicateOf?: Maybe<Issue>;
   /** The actor who edited the comment. */
   editor?: Maybe<Actor>;
-  /**
-   * A list of rationales associated with this issue's timeline events. Always
-   * returns an empty list; use the `intent` field on individual timeline events instead.
-   * @deprecated Use the `intent` field on individual timeline events instead. This field is being removed and now always returns an empty list.
-   */
-  eventRationales: Array<IssueEventRationale>;
   /** Identifies the primary key from the database as a BigInt. */
   fullDatabaseId?: Maybe<Scalars['BigInt']['output']>;
   /** The hovercard information for this issue */
@@ -10940,30 +11004,6 @@ export enum IssueEventConfidenceLevel {
   Medium = 'MEDIUM'
 }
 
-/**
- * Rationale text associated with an issue timeline event. Deprecated: the fields
- * that return this type are being removed and now return null/empty. Use the
- * `intent` field on individual timeline events instead.
- */
-export type IssueEventRationale = {
-  __typename?: 'IssueEventRationale';
-  /** The agent or user who produced the rationale. */
-  actor?: Maybe<Actor>;
-  /** Identifies the date and time when the rationale was created. */
-  createdAt: Scalars['DateTime']['output'];
-  /** The issue timeline event this rationale is associated with. */
-  issueEvent?: Maybe<IssueEventWithRationale>;
-  /** The reasoning or explanation text for the event. */
-  rationale: Scalars['String']['output'];
-};
-
-/**
- * An issue timeline event that may have an associated rationale. Deprecated: this
- * union is only reachable via the deprecated `IssueEventRationale` type, which is
- * being removed. Use the `intent` field on individual timeline events instead.
- */
-export type IssueEventWithRationale = ClosedEvent | IssueFieldAddedEvent | IssueFieldChangedEvent | IssueFieldRemovedEvent | IssueTypeAddedEvent | IssueTypeChangedEvent | IssueTypeRemovedEvent | LabeledEvent | UnlabeledEvent;
-
 /** Represents a 'issue_field_added' event on a given issue. */
 export type IssueFieldAddedEvent = Node & {
   __typename?: 'IssueFieldAddedEvent';
@@ -10981,11 +11021,6 @@ export type IssueFieldAddedEvent = Node & {
   issueField?: Maybe<IssueFields>;
   /** The selected options for option-backed fields; single-select returns one option and multi-select returns many. */
   options?: Maybe<Array<IssueFieldTimelineOption>>;
-  /**
-   * The rationale associated with this event. Always returns null; use `intent` instead.
-   * @deprecated Use `intent` instead. This field is being removed and now always returns null.
-   */
-  rationale?: Maybe<IssueEventRationale>;
   /** The value of the added field. */
   value?: Maybe<Scalars['String']['output']>;
 };
@@ -11015,11 +11050,6 @@ export type IssueFieldChangedEvent = Node & {
   previousOptions?: Maybe<Array<IssueFieldTimelineOption>>;
   /** The previous value of the field. */
   previousValue?: Maybe<Scalars['String']['output']>;
-  /**
-   * The rationale associated with this event. Always returns null; use `intent` instead.
-   * @deprecated Use `intent` instead. This field is being removed and now always returns null.
-   */
-  rationale?: Maybe<IssueEventRationale>;
 };
 
 /** Common fields across different issue field types */
@@ -11201,11 +11231,6 @@ export type IssueFieldRemovedEvent = Node & {
   issueField?: Maybe<IssueFields>;
   /** The removed options for option-backed fields; single-select returns one option and multi-select returns many. */
   options?: Maybe<Array<IssueFieldTimelineOption>>;
-  /**
-   * The rationale associated with this event. Always returns null; use `intent` instead.
-   * @deprecated Use `intent` instead. This field is being removed and now always returns null.
-   */
-  rationale?: Maybe<IssueEventRationale>;
 };
 
 /** Represents a single select issue field. */
@@ -11815,11 +11840,6 @@ export type IssueTypeAddedEvent = Node & {
   intent?: Maybe<IssueUpdateIntent>;
   /** The issue type added. */
   issueType?: Maybe<IssueType>;
-  /**
-   * The rationale associated with this event. Always returns null; use `intent` instead.
-   * @deprecated Use `intent` instead. This field is being removed and now always returns null.
-   */
-  rationale?: Maybe<IssueEventRationale>;
 };
 
 /** Represents a 'issue_type_changed' event on a given issue. */
@@ -11837,11 +11857,6 @@ export type IssueTypeChangedEvent = Node & {
   issueType?: Maybe<IssueType>;
   /** The issue type removed. */
   prevIssueType?: Maybe<IssueType>;
-  /**
-   * The rationale associated with this event. Always returns null; use `intent` instead.
-   * @deprecated Use `intent` instead. This field is being removed and now always returns null.
-   */
-  rationale?: Maybe<IssueEventRationale>;
 };
 
 /** The possible color for an issue type */
@@ -11915,11 +11930,6 @@ export type IssueTypeRemovedEvent = Node & {
   intent?: Maybe<IssueUpdateIntent>;
   /** The issue type removed. */
   issueType?: Maybe<IssueType>;
-  /**
-   * The rationale associated with this event. Always returns null; use `intent` instead.
-   * @deprecated Use `intent` instead. This field is being removed and now always returns null.
-   */
-  rationale?: Maybe<IssueEventRationale>;
 };
 
 /** Specifies an Issue Type to set on an issue, with optional metadata such as a rationale. */
@@ -12107,11 +12117,6 @@ export type LabeledEvent = Node & {
   label: Label;
   /** Identifies the `Labelable` associated with the event. */
   labelable: Labelable;
-  /**
-   * The rationale associated with this event. Always returns null; use `intent` instead.
-   * @deprecated Use `intent` instead. This field is being removed and now always returns null.
-   */
-  rationale?: Maybe<IssueEventRationale>;
 };
 
 /** Represents a given language found in repositories. */
@@ -14126,7 +14131,14 @@ export type Mutation = {
   markPullRequestReadyForReview?: Maybe<MarkPullRequestReadyForReviewPayload>;
   /** Merge a head into a branch. */
   mergeBranch?: Maybe<MergeBranchPayload>;
-  /** Merge a pull request. */
+  /**
+   * Merge a pull request.
+   *
+   * > [!NOTE]
+   * > We recommend using the [asynchronous merge REST
+   * API](${externalDocsUrl}/rest/pulls/pulls#merge-a-pull-request-asynchronously) instead.
+   * > This mutation does not support stacked pull requests.
+   */
   mergePullRequest?: Maybe<MergePullRequestPayload>;
   /** Minimizes a comment on an Issue, Commit, Pull Request, or Gist */
   minimizeComment?: Maybe<MinimizeCommentPayload>;
@@ -20765,7 +20777,7 @@ export enum PatchStatus {
 }
 
 /** A pending suggestion to assign a user to an issue. */
-export type PendingAssigneeSuggestion = {
+export type PendingAssigneeSuggestion = Node & {
   __typename?: 'PendingAssigneeSuggestion';
   /** The actor who suggested the assignee. */
   actor?: Maybe<Actor>;
@@ -20773,6 +20785,8 @@ export type PendingAssigneeSuggestion = {
   assignee?: Maybe<Assignee>;
   /** When the suggestion was created. */
   createdAt: Scalars['DateTime']['output'];
+  /** The Node ID of the PendingAssigneeSuggestion object */
+  id: Scalars['ID']['output'];
   /** The rationale provided for suggesting this assignee. */
   rationale?: Maybe<Scalars['String']['output']>;
   /** When the suggestion was last updated. */
@@ -20780,7 +20794,7 @@ export type PendingAssigneeSuggestion = {
 };
 
 /** A pending suggestion to close an issue. */
-export type PendingCloseSuggestion = {
+export type PendingCloseSuggestion = Node & {
   __typename?: 'PendingCloseSuggestion';
   /** The actor who suggested closing the issue. */
   actor?: Maybe<Actor>;
@@ -20791,6 +20805,8 @@ export type PendingCloseSuggestion = {
    * duplicate of. Only set when `stateReason` is `DUPLICATE`.
    */
   duplicateOf?: Maybe<IssueOrPullRequest>;
+  /** The Node ID of the PendingCloseSuggestion object */
+  id: Scalars['ID']['output'];
   /** The rationale provided for suggesting this close. */
   rationale?: Maybe<Scalars['String']['output']>;
   /** The state reason the suggestion would apply when closing the issue. */
@@ -20800,12 +20816,14 @@ export type PendingCloseSuggestion = {
 };
 
 /** A pending suggestion to set an issue field's value. */
-export type PendingFieldSuggestion = {
+export type PendingFieldSuggestion = Node & {
   __typename?: 'PendingFieldSuggestion';
   /** The actor who suggested the field value. */
   actor?: Maybe<Actor>;
   /** When the suggestion was created. */
   createdAt: Scalars['DateTime']['output'];
+  /** The Node ID of the PendingFieldSuggestion object */
+  id: Scalars['ID']['output'];
   /** The issue field the suggestion targets. */
   issueField?: Maybe<IssueFields>;
   /** The rationale provided for suggesting this field value. */
@@ -20848,12 +20866,14 @@ export type PendingIssueSuggestionRef = {
 };
 
 /** A pending suggestion to add a label to an issue. */
-export type PendingLabelSuggestion = {
+export type PendingLabelSuggestion = Node & {
   __typename?: 'PendingLabelSuggestion';
   /** The actor who suggested the label. */
   actor?: Maybe<Actor>;
   /** When the suggestion was created. */
   createdAt: Scalars['DateTime']['output'];
+  /** The Node ID of the PendingLabelSuggestion object */
+  id: Scalars['ID']['output'];
   /** The suggested label. */
   label?: Maybe<Label>;
   /** The rationale provided for suggesting this label. */
@@ -20863,12 +20883,14 @@ export type PendingLabelSuggestion = {
 };
 
 /** A pending suggestion to change an issue's type. */
-export type PendingTypeSuggestion = {
+export type PendingTypeSuggestion = Node & {
   __typename?: 'PendingTypeSuggestion';
   /** The actor who suggested the type change. */
   actor?: Maybe<Actor>;
   /** When the suggestion was created. */
   createdAt: Scalars['DateTime']['output'];
+  /** The Node ID of the PendingTypeSuggestion object */
+  id: Scalars['ID']['output'];
   /** The suggested issue type. */
   issueType?: Maybe<IssueType>;
   /** The rationale provided for suggesting this type change. */
@@ -30301,6 +30323,8 @@ export enum RepositoryPermission {
   Read = 'READ',
   /** Can read and clone this repository. Can also manage issues and pull requests */
   Triage = 'TRIAGE',
+  /** Can read and clone this repository. Can also manage issues and pull requests, plus additional triage abilities */
+  TriagePlus = 'TRIAGE_PLUS',
   /** Can read, clone, and push to this repository. Can also manage issues and pull requests */
   Write = 'WRITE'
 }
@@ -30443,6 +30467,17 @@ export enum RepositoryRuleType {
   Authorization = 'AUTHORIZATION',
   /** Branch name pattern */
   BranchNamePattern = 'BRANCH_NAME_PATTERN',
+  /**
+   * Enforce minimum line coverage thresholds on pull requests. When configured,
+   * uploaded coverage data must meet the specified criteria before changes can be merged.
+   */
+  CodeCoverage = 'CODE_COVERAGE',
+  /**
+   * Choose which severity levels of code quality results should block pull request
+   * merges. When configured, a code quality analysis must be done on the pull
+   * request before the changes can be merged.
+   */
+  CodeQuality = 'CODE_QUALITY',
   /**
    * Choose which tools must provide code scanning results before the reference is
    * updated. When configured, code scanning must be enabled and have results for
@@ -31590,12 +31625,16 @@ export enum RuleEnforcement {
 }
 
 /** Types which can be parameters for `RepositoryRule` objects. */
-export type RuleParameters = BranchNamePatternParameters | CodeScanningParameters | CommitAuthorEmailPatternParameters | CommitMessagePatternParameters | CommitterEmailPatternParameters | CopilotCodeReviewParameters | FileExtensionRestrictionParameters | FilePathRestrictionParameters | MaxFilePathLengthParameters | MaxFileSizeParameters | MergeQueueParameters | PullRequestParameters | RequiredDeploymentsParameters | RequiredStatusChecksParameters | TagNamePatternParameters | UpdateParameters | WorkflowsParameters;
+export type RuleParameters = BranchNamePatternParameters | CodeCoverageParameters | CodeQualityParameters | CodeScanningParameters | CommitAuthorEmailPatternParameters | CommitMessagePatternParameters | CommitterEmailPatternParameters | CopilotCodeReviewParameters | FileExtensionRestrictionParameters | FilePathRestrictionParameters | MaxFilePathLengthParameters | MaxFileSizeParameters | MergeQueueParameters | PullRequestParameters | RequiredDeploymentsParameters | RequiredStatusChecksParameters | TagNamePatternParameters | UpdateParameters | WorkflowsParameters;
 
 /** Specifies the parameters for a `RepositoryRule` object. Only one of the fields should be specified. */
 export type RuleParametersInput = {
   /** Parameters used for the `branch_name_pattern` rule type */
   branchNamePattern?: InputMaybe<BranchNamePatternParametersInput>;
+  /** Parameters used for the `code_coverage` rule type */
+  codeCoverage?: InputMaybe<CodeCoverageParametersInput>;
+  /** Parameters used for the `code_quality` rule type */
+  codeQuality?: InputMaybe<CodeQualityParametersInput>;
   /** Parameters used for the `code_scanning` rule type */
   codeScanning?: InputMaybe<CodeScanningParametersInput>;
   /** Parameters used for the `commit_author_email_pattern` rule type */
@@ -31827,7 +31866,7 @@ export type SecurityAdvisory = Node & {
   origin: Scalars['String']['output'];
   /** The permalink for the advisory */
   permalink?: Maybe<Scalars['URI']['output']>;
-  /** When the advisory was published */
+  /** When GitHub published this advisory */
   publishedAt: Scalars['DateTime']['output'];
   /** A list of references for this advisory */
   references: Array<SecurityAdvisoryReference>;
@@ -35589,11 +35628,6 @@ export type UnlabeledEvent = Node & {
   label: Label;
   /** Identifies the `Labelable` associated with the event. */
   labelable: Labelable;
-  /**
-   * The rationale associated with this event. Always returns null; use `intent` instead.
-   * @deprecated Use `intent` instead. This field is being removed and now always returns null.
-   */
-  rationale?: Maybe<IssueEventRationale>;
 };
 
 /** Autogenerated input type of UnlinkProjectV2FromRepository */
