@@ -4116,10 +4116,33 @@ export type ConvertedToDiscussionEvent = Node & {
   id: Scalars['ID']['output'];
 };
 
+/** The effort level for a Copilot code review. For more information, see [Review effort level](https://docs.github.com/en/copilot/concepts/agent-capabilities/agent-powered-workflows-and-operations/code-review#review-effort-level). */
+export enum CopilotCodeReviewEffort {
+  /** Copilot picks the effort for each pull request. */
+  Auto = 'AUTO',
+  /** Balanced effort and depth. */
+  Balanced = 'BALANCED',
+  /** Lower effort, faster review. */
+  Lite = 'LITE',
+  /** Highest effort, deepest review. */
+  Max = 'MAX'
+}
+
+/** A Copilot code review effort level. For more information, see [Review effort level](https://docs.github.com/en/copilot/concepts/agent-capabilities/agent-powered-workflows-and-operations/code-review#review-effort-level). */
+export enum CopilotCodeReviewEffortLevel {
+  /** Copilot picks the effort for each pull request. */
+  Auto = 'AUTO',
+  /** Balanced effort and depth. */
+  Balanced = 'BALANCED',
+  /** Lower effort, faster review. */
+  Lite = 'LITE',
+  /** Highest effort, deepest review. */
+  Max = 'MAX'
+}
+
 /**
  * Request Copilot code review for new pull requests automatically if the author
- * has access to Copilot code review and their premium requests quota has not
- * reached the limit.
+ * has access to Copilot code review and AI credits.
  */
 export type CopilotCodeReviewParameters = {
   __typename?: 'CopilotCodeReviewParameters';
@@ -4131,8 +4154,7 @@ export type CopilotCodeReviewParameters = {
 
 /**
  * Request Copilot code review for new pull requests automatically if the author
- * has access to Copilot code review and their premium requests quota has not
- * reached the limit.
+ * has access to Copilot code review and AI credits.
  */
 export type CopilotCodeReviewParametersInput = {
   /** Copilot automatically reviews draft pull requests before they are marked as ready for review. */
@@ -4140,6 +4162,69 @@ export type CopilotCodeReviewParametersInput = {
   /** Copilot automatically reviews each new push to the pull request. */
   reviewOnPush?: InputMaybe<Scalars['Boolean']['input']>;
 };
+
+/** The stable reason a Copilot code review request was denied or conflicted with an existing request. */
+export enum CopilotCodeReviewRequestReason {
+  /** The actor is not eligible to request Copilot code reviews. */
+  ActorIneligible = 'ACTOR_INELIGIBLE',
+  /** The Copilot code review reviewer app is not installed. */
+  AppNotInstalled = 'APP_NOT_INSTALLED',
+  /** The organization providing the Copilot license is unavailable. */
+  LicensedOrganizationUnavailable = 'LICENSED_ORGANIZATION_UNAVAILABLE',
+  /** The actor has no Copilot code review quota remaining. */
+  NoQuotaRemaining = 'NO_QUOTA_REMAINING',
+  /** The repository is not eligible for Copilot code reviews. */
+  RepositoryIneligible = 'REPOSITORY_INELIGIBLE',
+  /** A Copilot code review request is already pending for this pull request. */
+  RequestConflict = 'REQUEST_CONFLICT'
+}
+
+/** Which configuration an organization's Copilot code review runner values come from. */
+export enum CopilotCodeReviewRunnerConfiguredBy {
+  /** The organization has saved a Copilot code review runner configuration. */
+  CodeReview = 'CODE_REVIEW',
+  /** The values are inherited from the organization's Copilot coding agent runner configuration. */
+  CodingAgent = 'CODING_AGENT'
+}
+
+/** The type of runner Copilot code review uses. */
+export enum CopilotCodeReviewRunnerType {
+  /** Runners that match the configured labels or runner group. */
+  Labeled = 'LABELED',
+  /** Standard GitHub-hosted runners. */
+  Standard = 'STANDARD'
+}
+
+/** Which review comment severities Copilot code review leaves out. */
+export enum CopilotCodeReviewSeverityFilter {
+  /** Leave out low-severity comments. */
+  Low = 'LOW',
+  /** Leave out low- and medium-severity comments. */
+  LowAndMedium = 'LOW_AND_MEDIUM',
+  /** Keep every comment. */
+  NoFilter = 'NO_FILTER'
+}
+
+/** A validated source reported as contributing to a Copilot code review comment. */
+export type CopilotCodeReviewSource = {
+  __typename?: 'CopilotCodeReviewSource';
+  /** The kind of contributing source. */
+  kind: CopilotCodeReviewSourceKind;
+  /** The reported source name, or "custom instructions" for CUSTOM_INSTRUCTIONS. */
+  name: Scalars['String']['output'];
+  /** The validated repository-relative source path, if available. Commit OIDs are not exposed. */
+  path?: Maybe<Scalars['String']['output']>;
+};
+
+/** The kind of source reported as contributing to a Copilot code review comment. */
+export enum CopilotCodeReviewSourceKind {
+  /** Custom instructions. */
+  CustomInstructions = 'CUSTOM_INSTRUCTIONS',
+  /** An MCP server. */
+  Mcp = 'MCP',
+  /** A skill. */
+  Skill = 'SKILL'
+}
 
 /** Copilot endpoint information */
 export type CopilotEndpoints = {
@@ -7466,6 +7551,8 @@ export type Enterprise = Node & {
   billingEmail?: Maybe<Scalars['String']['output']>;
   /** Enterprise billing information visible to enterprise billing managers. */
   billingInfo?: Maybe<EnterpriseBillingInfo>;
+  /** The configured Copilot code review policy. Requires enterprise AI controls read permissions. */
+  copilotCodeReviewPolicy?: Maybe<EnterpriseCopilotCodeReviewPolicy>;
   /** Identifies the date and time when the object was created. */
   createdAt: Scalars['DateTime']['output'];
   /** Identifies the primary key from the database. */
@@ -7790,6 +7877,23 @@ export type EnterpriseConnection = {
   /** Identifies the total count of items in the connection. */
   totalCount: Scalars['Int']['output'];
 };
+
+/** The enterprise's configured Copilot code review policy, not a user's effective policy. */
+export type EnterpriseCopilotCodeReviewPolicy = {
+  __typename?: 'EnterpriseCopilotCodeReviewPolicy';
+  /** The configured policy. Null if the enterprise has not configured a policy. */
+  policyState?: Maybe<EnterpriseCopilotCodeReviewPolicyState>;
+};
+
+/** The configured Copilot code review policy for an enterprise. */
+export enum EnterpriseCopilotCodeReviewPolicyState {
+  /** Organization administrators configure Copilot code review. Not supported for standalone enterprises. */
+  ConfiguredByOrganizationAdmins = 'CONFIGURED_BY_ORGANIZATION_ADMINS',
+  /** Copilot code review is disabled for all organizations. */
+  DisabledForAllOrganizations = 'DISABLED_FOR_ALL_ORGANIZATIONS',
+  /** Copilot code review is enabled for all organizations. */
+  EnabledForAllOrganizations = 'ENABLED_FOR_ALL_ORGANIZATIONS'
+}
 
 /** The possible values for the enterprise base repository permission setting. */
 export enum EnterpriseDefaultRepositoryPermissionSettingValue {
@@ -9554,6 +9658,8 @@ export type FileExtensionRestrictionParametersInput = {
  */
 export type FilePathRestrictionParameters = {
   __typename?: 'FilePathRestrictionParameters';
+  /** Files matching these patterns are allowed even when they also match a restricted path. */
+  ignoredFilePaths?: Maybe<Array<Scalars['String']['output']>>;
   /** The file paths that are restricted from being pushed to the commit graph. */
   restrictedFilePaths: Array<Scalars['String']['output']>;
 };
@@ -9563,6 +9669,8 @@ export type FilePathRestrictionParameters = {
  * being pushed to the commit graph. This includes absolute paths that contain file names.
  */
 export type FilePathRestrictionParametersInput = {
+  /** Files matching these patterns are allowed even when they also match a restricted path. */
+  ignoredFilePaths?: InputMaybe<Array<Scalars['String']['input']>>;
   /** The file paths that are restricted from being pushed to the commit graph. */
   restrictedFilePaths: Array<Scalars['String']['input']>;
 };
@@ -12811,12 +12919,16 @@ export type MaxFilePathLengthParametersInput = {
 /** Prevent commits with individual files that exceed the specified limit from being pushed to the commit graph. */
 export type MaxFileSizeParameters = {
   __typename?: 'MaxFileSizeParameters';
+  /** Files matching these patterns may exceed the maximum size. */
+  ignoredFilePaths?: Maybe<Array<Scalars['String']['output']>>;
   /** The maximum file size allowed in megabytes. This limit does not apply to Git Large File Storage (Git LFS). */
   maxFileSize: Scalars['Int']['output'];
 };
 
 /** Prevent commits with individual files that exceed the specified limit from being pushed to the commit graph. */
 export type MaxFileSizeParametersInput = {
+  /** Files matching these patterns may exceed the maximum size. */
+  ignoredFilePaths?: InputMaybe<Array<Scalars['String']['input']>>;
   /** The maximum file size allowed in megabytes. This limit does not apply to Git Large File Storage (Git LFS). */
   maxFileSize: Scalars['Int']['input'];
 };
@@ -14296,6 +14408,16 @@ export type Mutation = {
   replaceActorsForAssignable?: Maybe<ReplaceActorsForAssignablePayload>;
   /** Reprioritizes a sub-issue to a different position in the parent list. */
   reprioritizeSubIssue?: Maybe<ReprioritizeSubIssuePayload>;
+  /**
+   * Requests a Copilot code review.
+   *
+   * Every call attempts to advance the Copilot code review lifecycle for the pull
+   * request: if no Copilot review has been requested yet, an initial request is created;
+   * if the most recent Copilot review has already completed, a new request is created
+   * automatically to continue the lifecycle. If a Copilot code review request is already
+   * pending, no new request is created and `failureReason` is `REQUEST_CONFLICT`.
+   */
+  requestCopilotCodeReview?: Maybe<RequestCopilotCodeReviewPayload>;
   /** Set review requests on a pull request. */
   requestReviews?: Maybe<RequestReviewsPayload>;
   /** Set review requests on a pull request using login strings instead of IDs. */
@@ -14391,6 +14513,8 @@ export type Mutation = {
   updateEnterpriseAdministratorRole?: Maybe<UpdateEnterpriseAdministratorRolePayload>;
   /** Sets whether private repository forks are enabled for an enterprise. */
   updateEnterpriseAllowPrivateRepositoryForkingSetting?: Maybe<UpdateEnterpriseAllowPrivateRepositoryForkingSettingPayload>;
+  /** Updates an enterprise's Copilot code review policy using the existing policy propagation and notification behavior. */
+  updateEnterpriseCopilotCodeReviewPolicy?: Maybe<UpdateEnterpriseCopilotCodeReviewPolicyPayload>;
   /** Sets the base repository permission for organizations in an enterprise. */
   updateEnterpriseDefaultRepositoryPermissionSetting?: Maybe<UpdateEnterpriseDefaultRepositoryPermissionSettingPayload>;
   /** Sets whether deploy keys are allowed to be created and used for an enterprise. */
@@ -14451,6 +14575,16 @@ export type Mutation = {
   updateNotificationRestrictionSetting?: Maybe<UpdateNotificationRestrictionSettingPayload>;
   /** Sets whether private repository forks are enabled for an organization. */
   updateOrganizationAllowPrivateRepositoryForkingSetting?: Maybe<UpdateOrganizationAllowPrivateRepositoryForkingSettingPayload>;
+  /** Updates an organization's Copilot code review policy when the enterprise delegates control to organization administrators. */
+  updateOrganizationCopilotCodeReviewPolicy?: Maybe<UpdateOrganizationCopilotCodeReviewPolicyPayload>;
+  /**
+   * Sets the runner configuration that Copilot code review uses for an
+   * organization. A LABELED runner requires at least one label or a runner group.
+   * Invalid input does not change the configuration.
+   */
+  updateOrganizationCopilotCodeReviewRunnerConfiguration?: Maybe<UpdateOrganizationCopilotCodeReviewRunnerConfigurationPayload>;
+  /** Updates an organization's Copilot code review settings. Omitted settings are not changed. */
+  updateOrganizationCopilotCodeReviewSettings?: Maybe<UpdateOrganizationCopilotCodeReviewSettingsPayload>;
   /** Sets whether contributors are required to sign off on web-based commits for repositories in an organization. */
   updateOrganizationWebCommitSignoffSetting?: Maybe<UpdateOrganizationWebCommitSignoffSettingPayload>;
   /**
@@ -14527,6 +14661,8 @@ export type Mutation = {
   updateRefs?: Maybe<UpdateRefsPayload>;
   /** Update information about a repository. */
   updateRepository?: Maybe<UpdateRepositoryPayload>;
+  /** Updates a repository's Copilot code review settings. Omitted settings are not changed. */
+  updateRepositoryCopilotCodeReviewSettings?: Maybe<UpdateRepositoryCopilotCodeReviewSettingsPayload>;
   /** Update a repository custom property. */
   updateRepositoryCustomProperty?: Maybe<UpdateRepositoryCustomPropertyPayload>;
   /** Update a repository ruleset */
@@ -15591,6 +15727,12 @@ export type MutationReprioritizeSubIssueArgs = {
 
 
 /** The root query for implementing GraphQL mutations. */
+export type MutationRequestCopilotCodeReviewArgs = {
+  input: RequestCopilotCodeReviewInput;
+};
+
+
+/** The root query for implementing GraphQL mutations. */
 export type MutationRequestReviewsArgs = {
   input: RequestReviewsInput;
 };
@@ -15855,6 +15997,12 @@ export type MutationUpdateEnterpriseAllowPrivateRepositoryForkingSettingArgs = {
 
 
 /** The root query for implementing GraphQL mutations. */
+export type MutationUpdateEnterpriseCopilotCodeReviewPolicyArgs = {
+  input: UpdateEnterpriseCopilotCodeReviewPolicyInput;
+};
+
+
+/** The root query for implementing GraphQL mutations. */
 export type MutationUpdateEnterpriseDefaultRepositoryPermissionSettingArgs = {
   input: UpdateEnterpriseDefaultRepositoryPermissionSettingInput;
 };
@@ -16035,6 +16183,24 @@ export type MutationUpdateOrganizationAllowPrivateRepositoryForkingSettingArgs =
 
 
 /** The root query for implementing GraphQL mutations. */
+export type MutationUpdateOrganizationCopilotCodeReviewPolicyArgs = {
+  input: UpdateOrganizationCopilotCodeReviewPolicyInput;
+};
+
+
+/** The root query for implementing GraphQL mutations. */
+export type MutationUpdateOrganizationCopilotCodeReviewRunnerConfigurationArgs = {
+  input: UpdateOrganizationCopilotCodeReviewRunnerConfigurationInput;
+};
+
+
+/** The root query for implementing GraphQL mutations. */
+export type MutationUpdateOrganizationCopilotCodeReviewSettingsArgs = {
+  input: UpdateOrganizationCopilotCodeReviewSettingsInput;
+};
+
+
+/** The root query for implementing GraphQL mutations. */
 export type MutationUpdateOrganizationWebCommitSignoffSettingArgs = {
   input: UpdateOrganizationWebCommitSignoffSettingInput;
 };
@@ -16151,6 +16317,12 @@ export type MutationUpdateRefsArgs = {
 /** The root query for implementing GraphQL mutations. */
 export type MutationUpdateRepositoryArgs = {
   input: UpdateRepositoryInput;
+};
+
+
+/** The root query for implementing GraphQL mutations. */
+export type MutationUpdateRepositoryCopilotCodeReviewSettingsArgs = {
+  input: UpdateRepositoryCopilotCodeReviewSettingsInput;
 };
 
 
@@ -19473,6 +19645,10 @@ export type Organization = Actor & MemberStatusable & Node & PackageOwner & Prof
   auditLog: OrganizationAuditEntryConnection;
   /** A URL pointing to the organization's public avatar. */
   avatarUrl: Scalars['URI']['output'];
+  /** The effective runner configuration that Copilot code review uses. Requires organization Copilot read permissions. */
+  copilotCodeReviewRunnerConfiguration?: Maybe<OrganizationCopilotCodeReviewRunnerConfiguration>;
+  /** The organization's Copilot code review settings. Requires organization Copilot read permissions. */
+  copilotCodeReviewSettings?: Maybe<OrganizationCopilotCodeReviewSettings>;
   /** Identifies the date and time when the object was created. */
   createdAt: Scalars['DateTime']['output'];
   /** Identifies the primary key from the database. */
@@ -19547,6 +19723,8 @@ export type Organization = Actor & MemberStatusable & Node & PackageOwner & Prof
   notificationDeliveryRestrictionEnabledSetting: NotificationRestrictionSettingValue;
   /** The billing email for the organization. */
   organizationBillingEmail?: Maybe<Scalars['String']['output']>;
+  /** The configured and effective Copilot code review policy. Requires organization Copilot read permissions. */
+  organizationCopilotCodeReviewPolicy?: Maybe<OrganizationCopilotCodeReviewPolicy>;
   /** A list of packages under the owner. */
   packages: PackageConnection;
   /** A list of users who have been invited to join this organization. */
@@ -20177,6 +20355,115 @@ export type OrganizationConnection = {
   /** Identifies the total count of items in the connection. */
   totalCount: Scalars['Int']['output'];
 };
+
+/** An organization's default Copilot code review effort. */
+export type OrganizationCopilotCodeReviewDefaultEffort = {
+  __typename?: 'OrganizationCopilotCodeReviewDefaultEffort';
+  /**
+   * The effort stored for the organization. Null if the organization inherits the
+   * default or has stored an effort that is not currently available.
+   */
+  configured?: Maybe<CopilotCodeReviewEffortLevel>;
+  /** Whether organization administrators can update the setting. */
+  editable: Scalars['Boolean']['output'];
+  /**
+   * The effort that repositories without their own setting use. When that effort
+   * is not currently available, this reports the fallback effort instead.
+   */
+  effective: CopilotCodeReviewEffortLevel;
+  /**
+   * The effort the organization inherits when it does not configure one: the
+   * enterprise default when one applies, otherwise GitHub's default.
+   */
+  githubDefault: CopilotCodeReviewEffortLevel;
+  /** Whether the enterprise or the organization controls the setting. */
+  managedBy: OrganizationCopilotCodeReviewPolicyManager;
+};
+
+/**
+ * The default Copilot code review effort to set for an organization. For more
+ * information, see [Review effort level](https://docs.github.com/en/copilot/concepts/agent-capabilities/agent-powered-workflows-and-operations/code-review#review-effort-level).
+ */
+export enum OrganizationCopilotCodeReviewEffortSetting {
+  /** Copilot picks the effort for each pull request. */
+  Auto = 'AUTO',
+  /** Balanced effort and depth. */
+  Balanced = 'BALANCED',
+  /** Clear the organization's value so repositories inherit the default. */
+  Inherit = 'INHERIT',
+  /** Lower effort, faster review. */
+  Lite = 'LITE',
+  /** Highest effort, deepest review. */
+  Max = 'MAX'
+}
+
+/** The organization's configured and effective Copilot code review policy. */
+export type OrganizationCopilotCodeReviewPolicy = {
+  __typename?: 'OrganizationCopilotCodeReviewPolicy';
+  /** The policy stored for the organization. Null if the organization has not configured a policy. */
+  configuredState?: Maybe<OrganizationCopilotCodeReviewPolicyState>;
+  /** Whether organization administrators can update the policy. */
+  editable: Scalars['Boolean']['output'];
+  /** The policy that applies to the organization after enterprise policy is considered. */
+  effectiveState: OrganizationCopilotCodeReviewPolicyState;
+  /** Whether the enterprise or the organization controls the policy. */
+  managedBy: OrganizationCopilotCodeReviewPolicyManager;
+};
+
+/** Why an organization's Copilot code review policy was not updated. */
+export enum OrganizationCopilotCodeReviewPolicyConflict {
+  /** The enterprise policy controls the organization's policy. */
+  PolicyManagedByEnterprise = 'POLICY_MANAGED_BY_ENTERPRISE'
+}
+
+/** The scope that controls an organization's Copilot code review policy. */
+export enum OrganizationCopilotCodeReviewPolicyManager {
+  /** The enterprise policy controls the organization's policy. */
+  Enterprise = 'ENTERPRISE',
+  /** Organization administrators control the policy. */
+  Organization = 'ORGANIZATION'
+}
+
+/** The Copilot code review policy state for an organization. */
+export enum OrganizationCopilotCodeReviewPolicyState {
+  /** Copilot code review is disabled. */
+  Disabled = 'DISABLED',
+  /** Copilot code review is enabled. */
+  Enabled = 'ENABLED'
+}
+
+/** The effective runner configuration that Copilot code review uses for an organization. */
+export type OrganizationCopilotCodeReviewRunnerConfiguration = {
+  __typename?: 'OrganizationCopilotCodeReviewRunnerConfiguration';
+  /** Whether repositories can use their own runner configuration. */
+  allowRepositoryCustomization: Scalars['Boolean']['output'];
+  /**
+   * Which configuration the values come from. CODING_AGENT means they are
+   * inherited from the organization's Copilot coding agent runner configuration.
+   */
+  configuredBy: CopilotCodeReviewRunnerConfiguredBy;
+  /** The runner group used for a labeled runner, if any. */
+  runnerGroupName?: Maybe<Scalars['String']['output']>;
+  /** The runner labels used for a labeled runner. */
+  runnerLabels: Array<Scalars['String']['output']>;
+  /** The type of runner. */
+  runnerType: CopilotCodeReviewRunnerType;
+};
+
+/** An organization's Copilot code review settings. */
+export type OrganizationCopilotCodeReviewSettings = {
+  __typename?: 'OrganizationCopilotCodeReviewSettings';
+  /** The review efforts that can currently be set for this organization, in display order. */
+  availableReviewEfforts: Array<CopilotCodeReviewEffortLevel>;
+  /** The default review effort for repositories that do not choose their own. */
+  defaultReviewEffort: OrganizationCopilotCodeReviewDefaultEffort;
+};
+
+/** Why an organization's Copilot code review settings were not updated. */
+export enum OrganizationCopilotCodeReviewSettingsConflict {
+  /** The organization cannot change a submitted setting. */
+  SettingNotEditable = 'SETTING_NOT_EDITABLE'
+}
 
 /** An edge in a connection. */
 export type OrganizationEdge = {
@@ -24522,6 +24809,11 @@ export type PullRequestParameters = {
   dismissalRestriction?: Maybe<DismissalRestriction>;
   /** Require an approving review in pull requests that modify files that have a designated code owner. */
   requireCodeOwnerReview: Scalars['Boolean']['output'];
+  /**
+   * When Copilot opens a pull request without a human collaborator, require one
+   * more approving review if a non-zero approval count is required.
+   */
+  requireExtraApprovalForUnattributedChanges: Scalars['Boolean']['output'];
   /** Whether the most recent reviewable push must be approved by someone other than the person who pushed it. */
   requireLastPushApproval: Scalars['Boolean']['output'];
   /** The number of approving reviews that are required before a pull request can be merged. */
@@ -24529,9 +24821,8 @@ export type PullRequestParameters = {
   /** All conversations on code must be resolved before a pull request can be merged. */
   requiredReviewThreadResolution: Scalars['Boolean']['output'];
   /**
-   * This field is in beta and subject to change. A collection of reviewers and
-   * associated file patterns. Each reviewer has a list of file patterns which
-   * determine the files that reviewer is required to review.
+   * A collection of reviewers and associated file patterns. Each reviewer has a
+   * list of file patterns which determine the files that reviewer is required to review.
    */
   requiredReviewers?: Maybe<Array<RequiredReviewerConfiguration>>;
 };
@@ -24549,6 +24840,11 @@ export type PullRequestParametersInput = {
   dismissalRestriction?: InputMaybe<DismissalRestrictionInput>;
   /** Require an approving review in pull requests that modify files that have a designated code owner. */
   requireCodeOwnerReview: Scalars['Boolean']['input'];
+  /**
+   * When Copilot opens a pull request without a human collaborator, require one
+   * more approving review if a non-zero approval count is required.
+   */
+  requireExtraApprovalForUnattributedChanges?: InputMaybe<Scalars['Boolean']['input']>;
   /** Whether the most recent reviewable push must be approved by someone other than the person who pushed it. */
   requireLastPushApproval: Scalars['Boolean']['input'];
   /** The number of approving reviews that are required before a pull request can be merged. */
@@ -24556,9 +24852,8 @@ export type PullRequestParametersInput = {
   /** All conversations on code must be resolved before a pull request can be merged. */
   requiredReviewThreadResolution: Scalars['Boolean']['input'];
   /**
-   * This argument is in beta and subject to change. A collection of reviewers and
-   * associated file patterns. Each reviewer has a list of file patterns which
-   * determine the files that reviewer is required to review.
+   * A collection of reviewers and associated file patterns. Each reviewer has a
+   * list of file patterns which determine the files that reviewer is required to review.
    */
   requiredReviewers?: InputMaybe<Array<RequiredReviewerConfigurationInput>>;
 };
@@ -24582,6 +24877,8 @@ export type PullRequestReview = Comment & Deletable & Minimizable & Node & React
   comments: PullRequestReviewCommentConnection;
   /** Identifies the commit associated with this pull request review. */
   commit?: Maybe<Commit>;
+  /** The persisted effective effort used to produce this Copilot code review, or null if unavailable. */
+  copilotCodeReviewEffort?: Maybe<CopilotCodeReviewEffort>;
   /** Identifies the date and time when the object was created. */
   createdAt: Scalars['DateTime']['output'];
   /** Check if this comment was created via an email reply. */
@@ -24599,6 +24896,8 @@ export type PullRequestReview = Comment & Deletable & Minimizable & Node & React
   id: Scalars['ID']['output'];
   /** Check if this comment was edited and includes an edit with the creation data */
   includesCreatedEdit: Scalars['Boolean']['output'];
+  /** Whether this review was produced by Copilot code review. Bot authorship alone does not establish provenance. */
+  isCopilotCodeReview: Scalars['Boolean']['output'];
   /** Returns whether or not a comment has been minimized. */
   isMinimized: Scalars['Boolean']['output'];
   /** The moment the editor made the last edit */
@@ -24703,6 +25002,8 @@ export type PullRequestReviewComment = Comment & Deletable & Minimizable & Node 
   bodyText: Scalars['String']['output'];
   /** Identifies the commit associated with the comment. */
   commit?: Maybe<Commit>;
+  /** Sources reported as contributing to this comment; may be incomplete. */
+  copilotCodeReviewSources: Array<CopilotCodeReviewSource>;
   /** Identifies when the comment was created. */
   createdAt: Scalars['DateTime']['output'];
   /** Check if this comment was created via an email reply. */
@@ -24724,6 +25025,8 @@ export type PullRequestReviewComment = Comment & Deletable & Minimizable & Node 
   id: Scalars['ID']['output'];
   /** Check if this comment was edited and includes an edit with the creation data */
   includesCreatedEdit: Scalars['Boolean']['output'];
+  /** Whether this comment was produced by Copilot code review. */
+  isCopilotCodeReview: Scalars['Boolean']['output'];
   /** Returns whether or not a comment has been minimized. */
   isMinimized: Scalars['Boolean']['output'];
   /** The moment the editor made the last edit */
@@ -29203,6 +29506,8 @@ export type Repository = Node & PackageOwner & ProjectOwner & ProjectV2Recent & 
   release?: Maybe<Release>;
   /** List of releases which are dependent on this repository. */
   releases: ReleaseConnection;
+  /** The repository's Copilot code review settings. Requires repository administration access. */
+  repositoryCopilotCodeReviewSettings?: Maybe<RepositoryCopilotCodeReviewSettings>;
   /** A custom property value for the repository. */
   repositoryCustomPropertyValue?: Maybe<RepositoryCustomPropertyValue>;
   /** A list of custom properties and their associated values for a repository. */
@@ -29926,6 +30231,54 @@ export enum RepositoryContributionType {
   Repository = 'REPOSITORY'
 }
 
+/** A repository's Copilot code review effort. */
+export type RepositoryCopilotCodeReviewEffort = {
+  __typename?: 'RepositoryCopilotCodeReviewEffort';
+  /**
+   * The effort stored for the repository. Null if the repository inherits its
+   * effort or has stored an effort that is not currently available.
+   */
+  configured?: Maybe<CopilotCodeReviewEffortLevel>;
+  /**
+   * The effort reviews use when the requester and the pull request do not choose
+   * one. When that effort is not currently available, this reports the effort
+   * reviews would use without it.
+   */
+  effective: CopilotCodeReviewEffortLevel;
+};
+
+/**
+ * The Copilot code review effort to set for a repository. For more information,
+ * see [Review effort level](https://docs.github.com/en/copilot/concepts/agent-capabilities/agent-powered-workflows-and-operations/code-review#review-effort-level).
+ */
+export enum RepositoryCopilotCodeReviewEffortSetting {
+  /** Copilot picks the effort for each pull request. */
+  Auto = 'AUTO',
+  /** Balanced effort and depth. */
+  Balanced = 'BALANCED',
+  /** Clear the repository's value so it inherits the effort from its organization, enterprise, or GitHub's default. */
+  Inherit = 'INHERIT',
+  /** Lower effort, faster review. */
+  Lite = 'LITE',
+  /** Highest effort, deepest review. */
+  Max = 'MAX'
+}
+
+/** A repository's Copilot code review settings. These settings tune reviews; they do not enable Copilot code review. */
+export type RepositoryCopilotCodeReviewSettings = {
+  __typename?: 'RepositoryCopilotCodeReviewSettings';
+  /** The review efforts that can currently be set for this repository, in display order. */
+  availableReviewEfforts: Array<CopilotCodeReviewEffortLevel>;
+  /** Whether reviews use the repository's custom instructions. */
+  customInstructionsEnabled: Scalars['Boolean']['output'];
+  /** Whether reviews can use MCP servers. */
+  mcpEnabled: Scalars['Boolean']['output'];
+  /** The repository's review effort. */
+  reviewEffort: RepositoryCopilotCodeReviewEffort;
+  /** Which review comment severities Copilot code review leaves out. */
+  severityFilter: CopilotCodeReviewSeverityFilter;
+};
+
 /** A repository custom property. */
 export type RepositoryCustomProperty = Node & {
   __typename?: 'RepositoryCustomProperty';
@@ -30457,11 +30810,16 @@ export enum RepositoryPermission {
   Admin = 'ADMIN',
   /** Can read, clone, and push to this repository. They can also manage issues, pull requests, and some repository settings */
   Maintain = 'MAINTAIN',
+  /** Can read and clone this repository. Can also moderate and edit issues and manage pull requests without write access */
+  Moderate = 'MODERATE',
   /** Can read and clone this repository. Can also open and comment on issues and pull requests */
   Read = 'READ',
   /** Can read and clone this repository. Can also manage issues and pull requests */
   Triage = 'TRIAGE',
-  /** Can read and clone this repository. Can also manage issues and pull requests, plus additional triage abilities */
+  /**
+   * Can read and clone this repository. Can also moderate and edit issues and manage pull requests without write access
+   * @deprecated TRIAGE_PLUS has been renamed to MODERATE. Use MODERATE instead. Removal on 2027-04-01 UTC.
+   */
   TriagePlus = 'TRIAGE_PLUS',
   /** Can read, clone, and push to this repository. Can also manage issues and pull requests */
   Write = 'WRITE'
@@ -30632,8 +30990,7 @@ export enum RepositoryRuleType {
   CommitMessagePattern = 'COMMIT_MESSAGE_PATTERN',
   /**
    * Request Copilot code review for new pull requests automatically if the author
-   * has access to Copilot code review and their premium requests quota has not
-   * reached the limit.
+   * has access to Copilot code review and AI credits.
    */
   CopilotCodeReview = 'COPILOT_CODE_REVIEW',
   /** Only allow users with bypass permission to create matching refs. */
@@ -31233,6 +31590,36 @@ export type ReprioritizeSubIssuePayload = {
   clientMutationId?: Maybe<Scalars['String']['output']>;
   /** The parent issue that the sub-issue was reprioritized in. */
   issue?: Maybe<Issue>;
+};
+
+/** Autogenerated input type of RequestCopilotCodeReview */
+export type RequestCopilotCodeReviewInput = {
+  /** A unique identifier for the client performing the mutation. */
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  /** The Node ID of the pull request to modify. */
+  pullRequestId: Scalars['ID']['input'];
+  /** The effort level to use for the Copilot code review. Omit to use the default effort level. */
+  reviewEffort?: InputMaybe<CopilotCodeReviewEffort>;
+};
+
+/** Autogenerated return type of RequestCopilotCodeReview. */
+export type RequestCopilotCodeReviewPayload = {
+  __typename?: 'RequestCopilotCodeReviewPayload';
+  /** Identifies the actor who performed the event. */
+  actor?: Maybe<Actor>;
+  /** A unique identifier for the client performing the mutation. */
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  /** The stable reason the request was denied or conflicted with an existing request. Null when the request succeeded. */
+  failureReason?: Maybe<CopilotCodeReviewRequestReason>;
+  /** The pull request that is getting requests. */
+  pullRequest?: Maybe<PullRequest>;
+  /**
+   * The Copilot code review request that was created or is already pending. Null
+   * when the request was denied or conflicted with an existing request.
+   */
+  reviewRequest?: Maybe<ReviewRequest>;
+  /** Did the operation succeed? */
+  success?: Maybe<Scalars['Boolean']['output']>;
 };
 
 /** Autogenerated input type of RequestReviewsByLogin */
@@ -36311,6 +36698,25 @@ export type UpdateEnterpriseAllowPrivateRepositoryForkingSettingPayload = {
   message?: Maybe<Scalars['String']['output']>;
 };
 
+/** Autogenerated input type of UpdateEnterpriseCopilotCodeReviewPolicy */
+export type UpdateEnterpriseCopilotCodeReviewPolicyInput = {
+  /** A unique identifier for the client performing the mutation. */
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  /** The ID of the enterprise whose policy to update. */
+  enterpriseId: Scalars['ID']['input'];
+  /** The policy to set. Standalone enterprises cannot delegate to organization administrators. */
+  policyState: EnterpriseCopilotCodeReviewPolicyState;
+};
+
+/** Autogenerated return type of UpdateEnterpriseCopilotCodeReviewPolicy. */
+export type UpdateEnterpriseCopilotCodeReviewPolicyPayload = {
+  __typename?: 'UpdateEnterpriseCopilotCodeReviewPolicyPayload';
+  /** A unique identifier for the client performing the mutation. */
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  /** The updated enterprise policy. */
+  policy?: Maybe<EnterpriseCopilotCodeReviewPolicy>;
+};
+
 /** Autogenerated input type of UpdateEnterpriseDefaultRepositoryPermissionSetting */
 export type UpdateEnterpriseDefaultRepositoryPermissionSettingInput = {
   /** A unique identifier for the client performing the mutation. */
@@ -36997,6 +37403,73 @@ export type UpdateOrganizationAllowPrivateRepositoryForkingSettingPayload = {
   organization?: Maybe<Organization>;
 };
 
+/** Autogenerated input type of UpdateOrganizationCopilotCodeReviewPolicy */
+export type UpdateOrganizationCopilotCodeReviewPolicyInput = {
+  /** A unique identifier for the client performing the mutation. */
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  /** The ID of the organization whose policy to update. */
+  organizationId: Scalars['ID']['input'];
+  /** The policy to set. */
+  state: OrganizationCopilotCodeReviewPolicyState;
+};
+
+/** Autogenerated return type of UpdateOrganizationCopilotCodeReviewPolicy. */
+export type UpdateOrganizationCopilotCodeReviewPolicyPayload = {
+  __typename?: 'UpdateOrganizationCopilotCodeReviewPolicyPayload';
+  /** A unique identifier for the client performing the mutation. */
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  /** Why the policy was not updated. Null if the update succeeded. */
+  conflict?: Maybe<OrganizationCopilotCodeReviewPolicyConflict>;
+  /** The organization's current policy. */
+  policy?: Maybe<OrganizationCopilotCodeReviewPolicy>;
+};
+
+/** Autogenerated input type of UpdateOrganizationCopilotCodeReviewRunnerConfiguration */
+export type UpdateOrganizationCopilotCodeReviewRunnerConfigurationInput = {
+  /** Whether repositories can use their own runner configuration. When omitted, the current effective value is kept. */
+  allowRepositoryCustomization?: InputMaybe<Scalars['Boolean']['input']>;
+  /** A unique identifier for the client performing the mutation. */
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  /** The ID of the organization whose runner configuration to set. */
+  organizationId: Scalars['ID']['input'];
+  /** The runner group for a labeled runner. */
+  runnerGroupName?: InputMaybe<Scalars['String']['input']>;
+  /** The runner labels for a labeled runner. */
+  runnerLabels?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** The type of runner. */
+  runnerType: CopilotCodeReviewRunnerType;
+};
+
+/** Autogenerated return type of UpdateOrganizationCopilotCodeReviewRunnerConfiguration. */
+export type UpdateOrganizationCopilotCodeReviewRunnerConfigurationPayload = {
+  __typename?: 'UpdateOrganizationCopilotCodeReviewRunnerConfigurationPayload';
+  /** A unique identifier for the client performing the mutation. */
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  /** The organization's updated runner configuration. */
+  runnerConfiguration?: Maybe<OrganizationCopilotCodeReviewRunnerConfiguration>;
+};
+
+/** Autogenerated input type of UpdateOrganizationCopilotCodeReviewSettings */
+export type UpdateOrganizationCopilotCodeReviewSettingsInput = {
+  /** A unique identifier for the client performing the mutation. */
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  /** The default review effort for repositories that do not choose their own. INHERIT clears the organization's value. */
+  defaultReviewEffort?: InputMaybe<OrganizationCopilotCodeReviewEffortSetting>;
+  /** The ID of the organization whose settings to update. */
+  organizationId: Scalars['ID']['input'];
+};
+
+/** Autogenerated return type of UpdateOrganizationCopilotCodeReviewSettings. */
+export type UpdateOrganizationCopilotCodeReviewSettingsPayload = {
+  __typename?: 'UpdateOrganizationCopilotCodeReviewSettingsPayload';
+  /** A unique identifier for the client performing the mutation. */
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  /** Why the settings were not updated. Null if the update succeeded. */
+  conflict?: Maybe<OrganizationCopilotCodeReviewSettingsConflict>;
+  /** The organization's current settings. */
+  settings?: Maybe<OrganizationCopilotCodeReviewSettings>;
+};
+
 /** Autogenerated input type of UpdateOrganizationWebCommitSignoffSetting */
 export type UpdateOrganizationWebCommitSignoffSettingInput = {
   /** A unique identifier for the client performing the mutation. */
@@ -37474,6 +37947,31 @@ export type UpdateRefsPayload = {
   __typename?: 'UpdateRefsPayload';
   /** A unique identifier for the client performing the mutation. */
   clientMutationId?: Maybe<Scalars['String']['output']>;
+};
+
+/** Autogenerated input type of UpdateRepositoryCopilotCodeReviewSettings */
+export type UpdateRepositoryCopilotCodeReviewSettingsInput = {
+  /** A unique identifier for the client performing the mutation. */
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  /** Whether reviews use the repository's custom instructions. */
+  customInstructionsEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Whether reviews can use MCP servers. */
+  mcpEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The ID of the repository whose settings to update. */
+  repositoryId: Scalars['ID']['input'];
+  /** The review effort for the repository. INHERIT clears the repository's value. */
+  reviewEffort?: InputMaybe<RepositoryCopilotCodeReviewEffortSetting>;
+  /** Which review comment severities Copilot code review leaves out. */
+  severityFilter?: InputMaybe<CopilotCodeReviewSeverityFilter>;
+};
+
+/** Autogenerated return type of UpdateRepositoryCopilotCodeReviewSettings. */
+export type UpdateRepositoryCopilotCodeReviewSettingsPayload = {
+  __typename?: 'UpdateRepositoryCopilotCodeReviewSettingsPayload';
+  /** A unique identifier for the client performing the mutation. */
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  /** The repository's current settings. */
+  settings?: Maybe<RepositoryCopilotCodeReviewSettings>;
 };
 
 /** Autogenerated input type of UpdateRepositoryCustomProperty */
